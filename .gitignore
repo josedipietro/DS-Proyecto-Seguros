@@ -9,6 +9,7 @@
 *.user
 *.userosscache
 *.sln.docstates
+*/Migrations
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -58,6 +59,7 @@ dlldata.c
 BenchmarkDotNet.Artifacts/
 
 # .NET
+# .NET Core
 project.lock.json
 project.fragment.lock.json
 artifacts/
@@ -144,11 +146,14 @@ _TeamCity*
 .axoCover/*
 !.axoCover/settings.json
 
+<<<<<<< HEAD
 # Coverlet is a free, cross platform Code Coverage Tool
 coverage*.json
 coverage*.xml
 coverage*.info
 
+=======
+>>>>>>> Base
 # Visual Studio code coverage results
 *.coverage
 *.coveragexml
