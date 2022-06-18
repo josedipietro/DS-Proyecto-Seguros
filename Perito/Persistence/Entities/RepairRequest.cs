@@ -1,25 +1,24 @@
 using System.Collections.Generic;
 
-namespace Administrador.Persistence.Entities
+namespace Perito.Persistence.Entities
 {
     public enum EnumRepairStatus
     {
         Peding,
         Listed,
         BuyOrder,
-        Repairing,
+        Repairing
         Factured,
     }
 
-    public class RepairRequest
+    public class RepairRequest : BaseEntity
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        [Key]
-        public Guid Id { get; set; }
-        public Guid QuotationId { get; set; }
-        public EnumRepairStatus Status { get; set; }
         public Guid VehicleId { get; set; }
-        public virtual Vehicle Vehicle { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid PolicyId { get; set; }
+        public EnumRepairStatus Status { get; set; }
         public Guid IncidentId { get; set; }
         public virtual Incident Incident { get; set; }
         public virtual ICollection<Part> Parts { get; set; }

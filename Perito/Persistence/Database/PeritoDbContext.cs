@@ -5,21 +5,17 @@ namespace Perito.Persistence.Database
 {
     public class PeritoDbContext : DbContext, IPeritoDbContext
     {
-        public PeritoDbContext()
-        {
-        }
+        public PeritoDbContext() { }
 
-        public PeritoDbContext(DbContextOptions<PeritoDbContext> options) : base(options)
-        {
-        }
+        public PeritoDbContext(DbContextOptions<PeritoDbContext> options) : base(options) { }
 
         public DbContext DbContext
         {
-            get
-            {
-                return this;
-            }
+            get { return this; }
         }
-
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Incident> Incidents { get; set; }
+        public virtual DbSet<RepairRequest> RepairRequests { get; set; }
+        public virtual DbSet<Part> Parts { get; set; }
     }
 }

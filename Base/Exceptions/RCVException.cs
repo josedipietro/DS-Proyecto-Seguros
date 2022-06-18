@@ -12,15 +12,18 @@ namespace Base.Exceptions
 
         public string MensajeSoporte { get; set; }
 
-
-        public RCVException(string _mensaje, Exception _excepcion, string _mensajesoporte, string _codigoError)
+        public RCVException(
+            string _mensaje,
+            Exception _excepcion,
+            string _mensajesoporte,
+            string _codigoError
+        )
         {
             Mensaje = _mensaje;
             Excepcion = _excepcion;
             CodigoError = _codigoError;
             MensajeSoporte = _mensajesoporte;
         }
-
 
         public RCVException(string _mensaje, string _mensajeSoporte, Exception _excepcion)
         {
