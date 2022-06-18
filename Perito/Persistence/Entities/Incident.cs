@@ -16,7 +16,7 @@ namespace Perito.Persistence.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Key]
         public Guid Id { get; set; }
-        public EnumIncidentStatus Status { get; set; }
+        public EnumIncidentStatus Status { get; set; } = EnumIncidentStatus.PendingProficient;
         public bool? IsGuilty { get; set; }
         public string? RevisionDescription { get; set; }
         public Guid UserId { get; set; }

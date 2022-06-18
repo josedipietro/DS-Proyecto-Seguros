@@ -17,7 +17,7 @@ namespace Administrador.Persistence.Entities
         [Key]
         public Guid Id { get; set; }
         public Guid QuotationId { get; set; }
-        public EnumRepairStatus Status { get; set; }
+        public EnumRepairStatus Status { get; set; } = EnumRepairStatus.Peding;
         public Guid VehicleId { get; set; }
         public virtual Vehicle Vehicle { get; set; }
         public Guid IncidentId { get; set; }

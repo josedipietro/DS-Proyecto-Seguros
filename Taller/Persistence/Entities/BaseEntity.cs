@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Perito.Persistence.Entities
+namespace Taller.Persistence.Entities
 {
     public class BaseEntity
     {

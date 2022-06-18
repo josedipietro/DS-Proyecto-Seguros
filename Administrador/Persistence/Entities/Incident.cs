@@ -15,7 +15,7 @@ namespace Administrador.Persistence.Entities
     {
         public DateTime Date { get; set; }
         public string Description { get; set; }
-        public EnumIncidentStatus Status { get; set; }
+        public EnumIncidentStatus Status { get; set; } = EnumIncidentStatus.PendingProficient;
         public string Address { get; set; }
         public int ParishId { get; set; }
         public virtual Parish Parish { get; set; }

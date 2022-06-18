@@ -5,9 +5,13 @@ namespace Proveedor.Persistence.Database
 {
     public interface IProveedorDbContext
     {
-        DbContext DbContext
-        {
-            get;
-        }
+        DbContext DbContext { get; }
+        DbSet<Enterprise> Enterprises { get; set; }
+        DbSet<RepairRequest> RepairRequests { get; set; }
+        DbSet<Part> Parts { get; set; }
+        DbSet<Participation> Participations { get; set; }
+        DbSet<User> Users { get; set; }
+        DbSet<PartQuotation> PartQuotations { get; set; }
+        DbSet<Brand> Brands { get; set; }
     }
 }

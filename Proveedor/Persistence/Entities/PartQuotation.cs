@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Administrador.Persistence.Entities
+namespace Proveedor.Persistence.Entities
 {
     public enum EnumPartQuotationStatus
     {
@@ -16,20 +16,17 @@ namespace Administrador.Persistence.Entities
         MoreThanThreeDays,
     }
 
-    public class PartQuotation
+    public class PartQuotation : BaseEntity
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        [Key]
-        public Guid Id { get; set; }
         public int Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
         public bool Original { get; set; }
-        public Decimal UnitPrice { get; set; }
-        public decimal discount_percentage { get; set; }
         public EnumPartQuotationStatus Status { get; set; } = EnumPartQuotationStatus.Listed;
         public EnumDeliveryTime DeliveryTime { get; set; }
+        public decimal discount_percentage { get; set; }
+        public DateTime? DeliveryStartDate { get; set; }
+        public DateTime? DeliveryEndDate { get; set; }
         public Guid PartId { get; set; }
         public virtual Part Part { get; set; }
-        public Guid EnterpriseId { get; set; }
-        public virtual Enterprise Enterprise { get; set; }
     }
 }

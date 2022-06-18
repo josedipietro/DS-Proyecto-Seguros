@@ -9,7 +9,6 @@ namespace Administrador.Persistence.Entities
         P
     }
 
-
     [Index(nameof(Email), IsUnique = true)]
     [Index(nameof(Phone), IsUnique = true)]
     [Index(
@@ -18,7 +17,7 @@ namespace Administrador.Persistence.Entities
         IsUnique = true,
         Name = "IX_Insured_Identification_IdentificationType"
     )]
-    public class Insured: BaseEntity
+    public class Insured : BaseEntity
     {
         public EnumInsuredTypeIdentification InsuredTypeIdentification { get; set; }
         public string Identification { get; set; }

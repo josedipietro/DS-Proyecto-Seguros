@@ -16,7 +16,7 @@ namespace Taller.Persistence.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Key]
         public Guid Id { get; set; }
-        public EnumRepairStatus Status { get; set; }
+        public EnumRepairStatus Status { get; set; } = EnumRepairStatus.Peding;
 
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid VehicleId { get; set; }
