@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Administrador.Persistence.Entities
+namespace Taller.Persistence.Entities
 {
     public class Brand
     {

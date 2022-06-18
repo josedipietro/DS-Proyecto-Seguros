@@ -1,19 +1,20 @@
 ﻿using System;
 
-namespace Taller.Persistence.Entities
+namespace Perito.Persistence.Entities
 {
     public class BaseEntity
     {
-        public BaseEntity()
-        {
-            Id = Guid.NewGuid();
-            CreatedAt = DateTime.Now;
-        }
-
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
         public Guid Id { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime CreatedAt { get; set; }
-        public string CreatedBy { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-        public string UpdatedBy { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime UpdatedAt { get; set; }
+
+        [DefaultValue(true)]
+        public bool IsActive { get; set; }
     }
 }
