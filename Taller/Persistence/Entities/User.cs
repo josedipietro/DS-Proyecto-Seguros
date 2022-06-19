@@ -1,4 +1,8 @@
+using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace Taller.Persistence.Entities
 {
@@ -12,6 +16,7 @@ namespace Taller.Persistence.Entities
         public string LdapID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Email { get; set; }
         public Guid EnterpriseId { get; set; }
         public virtual Enterprise Enterprise { get; set; }
     }

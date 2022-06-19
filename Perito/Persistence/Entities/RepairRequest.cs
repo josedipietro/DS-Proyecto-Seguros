@@ -1,4 +1,7 @@
+using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel;
 
 namespace Perito.Persistence.Entities
 {
@@ -7,7 +10,7 @@ namespace Perito.Persistence.Entities
         Peding,
         Listed,
         BuyOrder,
-        Repairing
+        Repairing,
         Factured,
     }
 

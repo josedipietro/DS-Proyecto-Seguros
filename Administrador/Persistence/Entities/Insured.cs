@@ -1,4 +1,8 @@
+using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace Administrador.Persistence.Entities
 {
@@ -13,7 +17,7 @@ namespace Administrador.Persistence.Entities
     [Index(nameof(Phone), IsUnique = true)]
     [Index(
         nameof(Identification),
-        nameof(IdentificationType),
+        nameof(InsuredTypeIdentification),
         IsUnique = true,
         Name = "IX_Insured_Identification_IdentificationType"
     )]

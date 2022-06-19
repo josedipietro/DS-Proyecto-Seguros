@@ -8,7 +8,7 @@ namespace Administrador.Persistence.Database
         DbContext DbContext { get; }
 
         DbSet<State> States { get; set; }
-        DBSet<Municipality> Municipalities { get; set; }
+        DbSet<Municipality> Municipalities { get; set; }
         DbSet<Parish> Parishes { get; set; }
         DbSet<Brand> Brands { get; set; }
         DbSet<Enterprise> Enterprises { get; set; }

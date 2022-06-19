@@ -1,4 +1,8 @@
+using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace Administrador.Persistence.Entities
 {
@@ -37,7 +41,7 @@ namespace Administrador.Persistence.Entities
         public string Password { get; set; }
         public EnumRole Role { get; set; }
         public EnumIdentificationType IdentificationType { get; set; }
-        public string IdentificationNumber { get; set; }
+        public string Identification { get; set; }
         public string Phone { get; set; }
         public Guid? EnterpriseId { get; set; }
         public virtual Enterprise Enterprise { get; set; }

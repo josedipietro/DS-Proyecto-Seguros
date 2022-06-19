@@ -1,5 +1,8 @@
+using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
-
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace Administrador.Persistence.Entities
 {
@@ -17,7 +20,7 @@ namespace Administrador.Persistence.Entities
     public class Vehicle: BaseEntity
     {
         public string Plate { get; set; }
-        public int Year { get, set; }
+        public int Year { get; set; }
         public string SerialMotorNumber { get; set; }
         public string SerialChasisNumber { get; set; }
         public string Color { get; set; }

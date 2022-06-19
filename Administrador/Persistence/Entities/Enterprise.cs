@@ -1,4 +1,8 @@
+using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace Administrador.Persistence.Entities
 {
@@ -11,7 +15,6 @@ namespace Administrador.Persistence.Entities
     [Index(nameof(Rif), IsUnique = true)]
     [Index(nameof(Email), IsUnique = true)]
     [Index(nameof(Phone), IsUnique = true)]
-    
     public class Enterprise : BaseEntity
     /*
     The Enterprise class have two types types
