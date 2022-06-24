@@ -27,5 +27,6 @@ namespace Administrador.Persistence.Database
         public virtual DbSet<Part> Parts { get; set; }
         public virtual DbSet<RepairRequest> RepairRequests { get; set; }
         public virtual DbSet<PartQuotation> PartQuotations { get; set; }
+
     }
 }
