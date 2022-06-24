@@ -25,7 +25,7 @@ namespace Administrador.Persistence.Entities
         public virtual Parish Parish { get; set; }
         public Guid PolicyId { get; set; }
         public virtual Policy Policy { get; set; }
-        public Guid ThirdPolicyId { get; set; }
+        public Guid? ThirdPolicyId { get; set; }
         public virtual Policy ThirdPolicy { get; set; }
         public virtual ICollection<RepairRequest> RepairRequests { get; set; }
     }
