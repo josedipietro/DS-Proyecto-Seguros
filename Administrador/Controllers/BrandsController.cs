@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Administrador.Persistence.Database;
 using Administrador.Persistence.Entities;
+using Administrador.BussinesLogic.DTOs;
+using Administrador.Persistence.DAOs;
+using Base.Exceptions;
 
 namespace Administrador.Controllers
 {
@@ -15,9 +18,11 @@ namespace Administrador.Controllers
     public class BrandsController : ControllerBase
     {
         private readonly AdministradorDbContext _context;
+        private readonly BrandDAO _brandDAO;
 
         public BrandsController(AdministradorDbContext context)
         {
+            _brandDAO = new BrandDAO(context);
             _context = context;
         }
 
@@ -84,20 +89,15 @@ namespace Administrador.Controllers
         // POST: api/Brands
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Brand>> PostBrand(Brand brand)
+        public async Task<ActionResult<Brand>> PostBrand(BrandDTO brand)
         {
-          if (_context.Brands == null)
-          {
-              return Problem("Entity set 'AdministradorDbContext.Brands'  is null.");
-          }
-            _context.Brands.Add(brand);
             try
             {
-                await _context.SaveChangesAsync();
+                await _brandDAO.Create(brand);
             }
             catch (DbUpdateException)
             {
-                if (BrandExists(brand.Code))
+                if (_brandDAO.BrandExists(brand.Code))
                 {
                     return Conflict();
                 }
@@ -106,7 +106,6 @@ namespace Administrador.Controllers
                     throw;
                 }
             }
-
             return CreatedAtAction("GetBrand", new { id = brand.Code }, brand);
         }
 

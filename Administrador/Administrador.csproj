@@ -34,6 +34,7 @@
     <PackageReference Include="Moq" Version="4.18.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <PackageReference Include="System.DirectoryServices" Version="6.0.0" />
     <PackageReference Include="System.ServiceModel.Primitives" Version="4.9.0" />
     <PackageReference Include="System.ServiceModel.Web" Version="1.0.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
@@ -45,10 +46,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="BussinesLogic\DTOs\" />
     <Folder Include="Migrations\" />
-    <Folder Include="Persistence\DAOs\Implementations\" />
-    <Folder Include="Persistence\DAOs\Interfaces\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Base\Base.csproj" />
   </ItemGroup>
 
 </Project>

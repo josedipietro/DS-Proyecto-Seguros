@@ -97,14 +97,7 @@ namespace Administrador.Controllers
             }
             catch (DbUpdateException)
             {
-                if (PartExists(part.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
                     throw;
-                }
             }
 
             return CreatedAtAction("GetPart", new { id = part.Id }, part);

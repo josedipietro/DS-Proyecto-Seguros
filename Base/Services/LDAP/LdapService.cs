@@ -1,16 +1,13 @@
-using System;
-using System.Text;
+using Microsoft.Extensions.Configuration;
 using System.DirectoryServices;
-using System.IO;
-using System.Security.AccessControl;
-using System.Security.Principal;
-using Base.Services.Models;
+using Base.Services.LDAP.Models;
 
 namespace Base.Services.LDAP
 {
     // Clase para Agrupar todos los métodos del Directorio Activo
     public class LdapService
     {
+        private readonly IConfiguration _config;
         private string _ldapPath;
         private string _ldapDomain;
         private string _ldapUser;
@@ -18,13 +15,16 @@ namespace Base.Services.LDAP
         private DirectoryEntry _ldapEntry;
 
         // obtener los datos del directorio activo desde variables de appsettings.json
-        public LdapService()
+        public LdapService(IConfiguration config)
         {
-            _ldapPath = System.Configuration.ConfigurationManager.AppSettings["LDAPPath"];
-            _ldapDomain = System.Configuration.ConfigurationManager.AppSettings["LDAPDomain"];
-            _ldapUser = System.Configuration.ConfigurationManager.AppSettings["LDAPUser"];
-            _ldapPassword = System.Configuration.ConfigurationManager.AppSettings["LDAPPassword"];
+            _config = config;
+            _ldapPath = config["LDAP:LDAPPath"];
+            _ldapDomain = config["LDAP:LDAPDomain"];
+            _ldapUser = config["LDAP:LDAPUser"];
+            _ldapPassword = config["LDAP:LDAPPassword"];
+#pragma warning disable CA1416 // Validar la compatibilidad de la plataforma
             _ldapEntry = new DirectoryEntry(_ldapPath, _ldapUser, _ldapPassword);
+#pragma warning restore CA1416 // Validar la compatibilidad de la plataforma
         }
 
         // Crear Un Usuario en el Directorio Activo
@@ -40,7 +40,7 @@ namespace Base.Services.LDAP
         {
             // crear un nuevo usuario en el directorio activo
             DirectoryEntry userEntry = _ldapEntry.Children.Add(user.Username, "user");
-            userEnty.Properties["displayName"].Value = user.DisplayName;
+            userEntry.Properties["displayName"].Value = user.DisplayName;
             userEntry.Properties["mail"].Value = user.Email;
             userEntry.Invoke("SetPassword", user.Password);
             userEntry.Properties["userPrincipalName"].Value = user.Username + "@" + _ldapDomain;
@@ -70,7 +70,7 @@ namespace Base.Services.LDAP
         public DirectoryEntry GetRole(string role)
         {
             // obtener un rol del directorio activo
-            DirectoryEntry roleEntry = roleEntry.Children.Find(role, "group");
+            DirectoryEntry roleEntry = _ldapEntry.Children.Find(role, "group");
             return roleEntry;
         }
 
