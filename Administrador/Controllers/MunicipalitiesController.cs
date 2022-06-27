@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Administrador.Persistence.Database;
 using Administrador.Persistence.Entities;
+using Administrador.Persistence.DAOs;
 
 namespace Administrador.Controllers
 {
@@ -16,30 +17,25 @@ namespace Administrador.Controllers
     {
         private readonly AdministradorDbContext _context;
 
+        private readonly MunicipalityDAO _municipalityDAO;
+
         public MunicipalitiesController(AdministradorDbContext context)
         {
+            _municipalityDAO = new MunicipalityDAO(context);
             _context = context;
         }
 
         // GET: api/Municipalities
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Municipality>>> GetMunicipalities()
+        public async Task<ActionResult<IEnumerable<Municipality>>> GetMunicipalities(int? stateId)
         {
-          if (_context.Municipalities == null)
-          {
-              return NotFound();
-          }
-            return await _context.Municipalities.ToListAsync();
+            return await _municipalityDAO.GetMunicipalities(stateId);
         }
 
         // GET: api/Municipalities/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Municipality>> GetMunicipality(int id)
         {
-          if (_context.Municipalities == null)
-          {
-              return NotFound();
-          }
             var municipality = await _context.Municipalities.FindAsync(id);
 
             if (municipality == null)
@@ -48,77 +44,6 @@ namespace Administrador.Controllers
             }
 
             return municipality;
-        }
-
-        // PUT: api/Municipalities/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutMunicipality(int id, Municipality municipality)
-        {
-            if (id != municipality.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(municipality).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MunicipalityExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Municipalities
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Municipality>> PostMunicipality(Municipality municipality)
-        {
-          if (_context.Municipalities == null)
-          {
-              return Problem("Entity set 'AdministradorDbContext.Municipalities'  is null.");
-          }
-            _context.Municipalities.Add(municipality);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetMunicipality", new { id = municipality.Id }, municipality);
-        }
-
-        // DELETE: api/Municipalities/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMunicipality(int id)
-        {
-            if (_context.Municipalities == null)
-            {
-                return NotFound();
-            }
-            var municipality = await _context.Municipalities.FindAsync(id);
-            if (municipality == null)
-            {
-                return NotFound();
-            }
-
-            _context.Municipalities.Remove(municipality);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool MunicipalityExists(int id)
-        {
-            return (_context.Municipalities?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
