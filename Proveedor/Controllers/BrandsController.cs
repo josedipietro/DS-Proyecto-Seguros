@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Proveedor.BussinesLogic.DTOs;
+using Proveedor.Persistence.DAOs;
 using Proveedor.Persistence.Database;
 using Proveedor.Persistence.Entities;
 
@@ -15,89 +17,77 @@ namespace Proveedor.Controllers
     public class BrandsController : ControllerBase
     {
         private readonly ProveedorDbContext _context;
+        private readonly BrandDAO _brandDAO;
 
         public BrandsController(ProveedorDbContext context)
         {
+            _brandDAO = new BrandDAO(context);
             _context = context;
         }
 
         // GET: api/Brands
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Brand>>> GetBrands()
+        public async Task<ActionResult<List<BrandDTO>>> GetBrands()
         {
-          if (_context.Brands == null)
-          {
-              return NotFound();
-          }
-            return await _context.Brands.ToListAsync();
+            return await _brandDAO.List();
         }
 
         // GET: api/Brands/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Brand>> GetBrand(string id)
+        public async Task<ActionResult<BrandDTO>> GetBrand(string id)
         {
-          if (_context.Brands == null)
-          {
-              return NotFound();
-          }
-            var brand = await _context.Brands.FindAsync(id);
+            var brand = await _brandDAO.Get(id);
 
             if (brand == null)
             {
                 return NotFound();
             }
 
-            return brand;
+            return new BrandDTO
+            {
+                Code = brand.Code,
+                Name = brand.Name,
+                Description = brand.Description
+            };
         }
 
         // PUT: api/Brands/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBrand(string id, Brand brand)
+        public async Task<ActionResult<BrandDTO>> PutBrand(string id, UpdateBrandDTO brand)
         {
-            if (id != brand.Code)
+            // Obtener la Marca
+            var brandToUpdate = await _brandDAO.Get(id);
+
+            if (brandToUpdate == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(brand).State = EntityState.Modified;
+            // Actualizar los datos
 
             try
             {
-                await _context.SaveChangesAsync();
+                return await _brandDAO.Update(brandToUpdate, brand);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BrandExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
-
-            return NoContent();
         }
 
         // POST: api/Brands
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Brand>> PostBrand(Brand brand)
+        public async Task<ActionResult<Brand>> PostBrand(BrandDTO brand)
         {
-          if (_context.Brands == null)
-          {
-              return Problem("Entity set 'ProveedorDbContext.Brands'  is null.");
-          }
-            _context.Brands.Add(brand);
             try
             {
-                await _context.SaveChangesAsync();
+                await _brandDAO.Create(brand);
             }
             catch (DbUpdateException)
             {
-                if (BrandExists(brand.Code))
+                if (_brandDAO.BrandExists(brand.Code))
                 {
                     return Conflict();
                 }
@@ -106,33 +96,7 @@ namespace Proveedor.Controllers
                     throw;
                 }
             }
-
             return CreatedAtAction("GetBrand", new { id = brand.Code }, brand);
-        }
-
-        // DELETE: api/Brands/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBrand(string id)
-        {
-            if (_context.Brands == null)
-            {
-                return NotFound();
-            }
-            var brand = await _context.Brands.FindAsync(id);
-            if (brand == null)
-            {
-                return NotFound();
-            }
-
-            _context.Brands.Remove(brand);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool BrandExists(string id)
-        {
-            return (_context.Brands?.Any(e => e.Code == id)).GetValueOrDefault();
         }
     }
 }

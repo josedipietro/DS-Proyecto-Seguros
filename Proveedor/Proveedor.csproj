@@ -48,6 +48,7 @@
     <PackageReference Include="XunitXml.TestLogger" Version="3.0.70" />
   </ItemGroup>
 
+<<<<<<< HEAD
   <ItemGroup>
     <Folder Include="BussinesLogic\DTOs\" />
     <Folder Include="Persistence\DAOs\Implementations\" />
@@ -58,4 +59,6 @@
     <ProjectReference Include="..\Base\Base.csproj" />
   </ItemGroup>
 
+=======
+>>>>>>> 2753ec9 (dtos & daos)
 </Project>

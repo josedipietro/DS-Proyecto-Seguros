@@ -13,6 +13,5 @@ namespace Proveedor.Persistence.Entities
 
         public virtual ICollection<User> Users { get; set; }
         public virtual ICollection<Brand> Brands { get; set; }
-        public virtual ICollection<Participation> Participations { get; set; }
     }
 }
