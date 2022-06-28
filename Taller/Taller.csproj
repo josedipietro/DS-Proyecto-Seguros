@@ -50,7 +50,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="BussinesLogic\DTOs\" />
     <Folder Include="Migrations\" />
     <Folder Include="Persistence\DAOs\Implementations\" />
     <Folder Include="Persistence\DAOs\Interfaces\" />
