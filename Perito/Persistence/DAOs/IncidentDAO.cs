@@ -7,25 +7,25 @@ namespace Perito.Persistence.DAOs
 {
     public class IncidentDAO
     {
-        private readonly PeritoDbContext _context;
+        private readonly IPeritoDbContext _context;
 
-        public IncidentDAO(PeritoDbContext proveedorDbContext)
+        public IncidentDAO(IPeritoDbContext proveedorDbContext)
         {
             _context = proveedorDbContext;
         }
 
-        public async Task<Incident?> GetRepairRequest(Guid id)
+        public async Task<Incident?> GetIncident(Guid id)
         {
             return await _context.Incidents
                 .FindAsync(id);
         }
 
-        public async Task<List<Incident>> GetRepairRequests()
+        public async Task<List<Incident>> GetIncidents()
         {
             return await _context.Incidents.ToListAsync();
         }
 
-        public async Task<Incident> CreateRepairRequest(IncidentDTO incidentDTO)
+        public async Task<Incident> CreateIncident(IncidentDTO incidentDTO)
         {
             var repairRequests = await _context.RepairRequests.Where(r => r.IsActive && incidentDTO.RepairRequests.Contains(r.Id.ToString())).ToListAsync();
             var incident= new Incident
@@ -42,12 +42,12 @@ namespace Perito.Persistence.DAOs
             };
 
             _context.Incidents.Add(incident);
-            await _context.SaveChangesAsync();
+            await _context.DbContext.SaveChangesAsync();
 
             return incident;
         }
 
-        public async Task<Incident?> UpdateRepairRequest(Guid id, IncidentDTO incidentDTO)
+        public async Task<Incident?> UpdateIncident(Guid id, IncidentDTO incidentDTO)
         {
             var incident = await _context.Incidents.FindAsync(id);
             if (incident == null) return null;
@@ -62,7 +62,7 @@ namespace Perito.Persistence.DAOs
                 incident.UserId = incidentDTO.UserId;
 
             _context.Incidents.Update(incident);
-            await _context.SaveChangesAsync();
+            await _context.DbContext.SaveChangesAsync();
 
             return incident;
         }

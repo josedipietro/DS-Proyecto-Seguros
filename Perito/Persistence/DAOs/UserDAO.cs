@@ -7,9 +7,9 @@ namespace Perito.Persistence.DAOs
 {
     public class UserDAO
     {
-        private readonly PeritoDbContext _context;
+        private readonly IPeritoDbContext _context;
 
-        public UserDAO(PeritoDbContext context)
+        public UserDAO(IPeritoDbContext context)
         {
             _context = context;
         }
@@ -42,7 +42,7 @@ namespace Perito.Persistence.DAOs
         public async Task<User> DeleteUser(User user)
         {
             user.IsActive = false;
-            await _context.SaveChangesAsync();
+            await _context.DbContext.SaveChangesAsync();
             return user;
         }
 
@@ -64,7 +64,7 @@ namespace Perito.Persistence.DAOs
                 IsActive = true,
             };
             _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            await _context.DbContext.SaveChangesAsync();
             return user;
         }
     }

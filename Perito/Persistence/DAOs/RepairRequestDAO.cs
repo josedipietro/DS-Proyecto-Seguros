@@ -7,8 +7,8 @@ namespace Perito.Persistence.DAOs
 {
     public class RepairRequestDAO
     {
-        private readonly PeritoDbContext _context;
-        public RepairRequestDAO(PeritoDbContext context)
+        private readonly IPeritoDbContext _context;
+        public RepairRequestDAO(IPeritoDbContext context)
         {
             _context = context;
         }
@@ -39,7 +39,7 @@ namespace Perito.Persistence.DAOs
                 IsActive = true,
             };
             _context.RepairRequests.Add(repairRequest);
-            await _context.SaveChangesAsync();
+            await _context.DbContext.SaveChangesAsync();
 
             return repairRequest;
         }
@@ -59,7 +59,7 @@ namespace Perito.Persistence.DAOs
             repairRequest.VehicleId = repairRequestDTO.VehicleId;
 
             _context.RepairRequests.Update(repairRequest);
-            await _context.SaveChangesAsync();
+            await _context.DbContext.SaveChangesAsync();
 
             return repairRequest;
         }

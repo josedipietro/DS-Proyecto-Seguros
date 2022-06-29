@@ -8,9 +8,9 @@ namespace Perito.Persistence.DAOs
     public class PartDAO
     {
 
-        private readonly PeritoDbContext _context;
+        private readonly IPeritoDbContext _context;
 
-        public PartDAO(PeritoDbContext context)
+        public PartDAO(IPeritoDbContext context)
         {
             _context = context;
         }
@@ -40,7 +40,7 @@ namespace Perito.Persistence.DAOs
                 IsActive = true,
             };
             _context.Parts.Add(part);
-            await _context.SaveChangesAsync();
+            await _context.DbContext.SaveChangesAsync();
 
             return part;
         }
