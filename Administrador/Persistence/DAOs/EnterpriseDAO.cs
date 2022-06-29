@@ -100,7 +100,6 @@ namespace Administrador.Persistence.DAOs
             enterprise.Email = enterpriseDTO.Email;
             enterprise.ParishId = enterpriseDTO.ParishId;
             enterprise.Brands = brands;
-            enterprise.UpdatedAt = DateTime.Now;
             _context.Enterprises.Update(enterprise);
             await _context.SaveChangesAsync();
             return enterprise;
