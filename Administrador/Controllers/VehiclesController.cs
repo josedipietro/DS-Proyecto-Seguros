@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Administrador.Persistence.Database;
 using Administrador.Persistence.Entities;
+using Administrador.Persistence.DAOs;
+using Administrador.BussinesLogic.DTOs;
 
 namespace Administrador.Controllers
 {
@@ -14,33 +16,29 @@ namespace Administrador.Controllers
     [ApiController]
     public class VehiclesController : ControllerBase
     {
-        private readonly AdministradorDbContext _context;
+        private readonly IVehicleDAO _vehicleDAO;
 
-        public VehiclesController(AdministradorDbContext context)
+        public VehiclesController(IVehicleDAO vehicleDAO)
         {
-            _context = context;
+            _vehicleDAO = vehicleDAO;
         }
 
         // GET: api/Vehicles
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Vehicle>>> GetVehicles()
+        public async Task<ActionResult<IEnumerable<Vehicle>>> GetVehicles(
+            EnumBodyworkType? bodyworkType,
+            string? brandCode,
+            Guid? InsuredId
+        )
         {
-          if (_context.Vehicles == null)
-          {
-              return NotFound();
-          }
-            return await _context.Vehicles.ToListAsync();
+            return await _vehicleDAO.GetVehicles(bodyworkType, brandCode, InsuredId);
         }
 
         // GET: api/Vehicles/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Vehicle>> GetVehicle(Guid id)
         {
-          if (_context.Vehicles == null)
-          {
-              return NotFound();
-          }
-            var vehicle = await _context.Vehicles.FindAsync(id);
+            var vehicle = await _vehicleDAO.GetVehicle(id);
 
             if (vehicle == null)
             {
@@ -53,72 +51,57 @@ namespace Administrador.Controllers
         // PUT: api/Vehicles/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutVehicle(Guid id, Vehicle vehicle)
+        public async Task<ActionResult<Vehicle>> PutVehicle(Guid id, VehicleDTO vehicleDTO)
         {
-            if (id != vehicle.Id)
+            var vehicle = await _vehicleDAO.GetVehicle(id);
+            if (vehicle == null)
             {
-                return BadRequest();
+                return NotFound();
             }
-
-            _context.Entry(vehicle).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                return await _vehicleDAO.UpdateVehicle(vehicle, vehicleDTO);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!VehicleExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
-
-            return NoContent();
         }
 
         // POST: api/Vehicles
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Vehicle>> PostVehicle(Vehicle vehicle)
+        public async Task<ActionResult<Vehicle>> PostVehicle(VehicleDTO vehicleDTO)
         {
-          if (_context.Vehicles == null)
-          {
-              return Problem("Entity set 'AdministradorDbContext.Vehicles'  is null.");
-          }
-            _context.Vehicles.Add(vehicle);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetVehicle", new { id = vehicle.Id }, vehicle);
+            try
+            {
+                var vehicle = await _vehicleDAO.CreateVehicle(vehicleDTO);
+                return CreatedAtAction("GetVehicle", new { id = vehicle.Id }, vehicle);
+            }
+            catch (DbUpdateException)
+            {
+                throw;
+            }
         }
 
         // DELETE: api/Vehicles/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVehicle(Guid id)
         {
-            if (_context.Vehicles == null)
-            {
-                return NotFound();
-            }
-            var vehicle = await _context.Vehicles.FindAsync(id);
+            var vehicle = await _vehicleDAO.GetVehicle(id);
             if (vehicle == null)
             {
                 return NotFound();
             }
-
-            _context.Vehicles.Remove(vehicle);
-            await _context.SaveChangesAsync();
-
+            try
+            {
+                await _vehicleDAO.DeleteVehicle(vehicle);
+            }
+            catch (DbUpdateException)
+            {
+                throw;
+            }
             return NoContent();
-        }
-
-        private bool VehicleExists(Guid id)
-        {
-            return (_context.Vehicles?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

@@ -36,5 +36,26 @@ namespace Administrador.Persistence.DAOs
             await _context.SaveChangesAsync();
             return partQuotation;
         }
+
+        public async Task<PartQuotation> CreatePartQuotation(PartQuotationDTO partQuotationDTO)
+        {
+            var partQuotation = new PartQuotation
+            {
+                Id = partQuotationDTO.Id,
+                Quantity = partQuotationDTO.Quantity,
+                Original = partQuotationDTO.Original,
+                UnitPrice = partQuotationDTO.UnitPrice,
+                discount_percentage = partQuotationDTO.discount_percentage,
+                Status = partQuotationDTO.Status,
+                DeliveryTime = partQuotationDTO.DeliveryTime,
+                PartId = partQuotationDTO.PartId,
+                EnterpriseId = partQuotationDTO.EnterpriseId,
+            };
+
+            _context.PartQuotations.Add(partQuotation);
+            await _context.SaveChangesAsync();
+
+            return partQuotation;
+        }
     }
 }

@@ -11,5 +11,7 @@ namespace Administrador.Persistence.DAOs
             PartQuotation partQuotation,
             EnumPartQuotationStatus status
         );
+
+        Task<PartQuotation> CreatePartQuotation(PartQuotationDTO partQuotationDTO);
     }
 }

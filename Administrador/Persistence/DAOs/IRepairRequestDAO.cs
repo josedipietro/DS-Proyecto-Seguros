@@ -7,5 +7,6 @@ namespace Administrador.Persistence.DAOs
     {
         Task<RepairRequest?> GetRepairRequest(Guid id);
         Task<List<RepairRequest>> GetRepairRequests(Guid? IncidentId);
+        Task<RepairRequest> CreateRepairRequest(RepairRequestDTO repairRequestDTO);
     }
 }

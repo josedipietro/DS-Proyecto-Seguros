@@ -35,5 +35,22 @@ namespace Administrador.Persistence.DAOs
             await _context.SaveChangesAsync();
             return part;
         }
+
+        public async Task<Part> CreatePart(PartDTO partDTO)
+        {
+            var part = new Part
+            {
+                Id = partDTO.Id,
+                Name = partDTO.Name,
+                Quantity = partDTO.Quantity,
+                RepairRequestId = partDTO.RepairRequestId,
+                Status = partDTO.Status
+            };
+
+            _context.Parts.Add(part);
+            await _context.SaveChangesAsync();
+
+            return part;
+        }
     }
 }

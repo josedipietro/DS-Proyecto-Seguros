@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Administrador.Persistence.Database;
 using Administrador.Persistence.Entities;
+using Administrador.BussinesLogic.DTOs;
+using Administrador.Persistence.DAOs;
+using Base.Services.RabbitMQ;
 
 namespace Administrador.Controllers
 {
@@ -14,33 +17,32 @@ namespace Administrador.Controllers
     [ApiController]
     public class IncidentsController : ControllerBase
     {
-        private readonly AdministradorDbContext _context;
+        private readonly IIncidentDAO _incidentDAO;
+        private readonly AmqpService _amqpService;
 
-        public IncidentsController(AdministradorDbContext context)
+        public IncidentsController(IIncidentDAO incidentDAO, AmqpService amqpService)
         {
-            _context = context;
+            _incidentDAO = incidentDAO;
+            _amqpService = amqpService ?? throw new ArgumentNullException(nameof(amqpService));
         }
 
         // GET: api/Incidents
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Incident>>> GetIncidents()
+        public async Task<ActionResult<IEnumerable<Incident>>> GetIncidents(
+            int? parishId,
+            EnumIncidentStatus? status,
+            Guid? policyId,
+            Guid? thirdPolicyId
+        )
         {
-            if (_context.Incidents == null)
-            {
-                return NotFound();
-            }
-            return await _context.Incidents.ToListAsync();
+            return await _incidentDAO.GetIncidents(parishId, status, policyId, thirdPolicyId);
         }
 
         // GET: api/Incidents/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Incident>> GetIncident(Guid id)
         {
-            if (_context.Incidents == null)
-            {
-                return NotFound();
-            }
-            var incident = await _context.Incidents.FindAsync(id);
+            var incident = await _incidentDAO.GetIncident(id);
 
             if (incident == null)
             {
@@ -50,75 +52,21 @@ namespace Administrador.Controllers
             return incident;
         }
 
-        // PUT: api/Incidents/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutIncident(Guid id, Incident incident)
-        {
-            if (id != incident.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(incident).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!IncidentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Incidents
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Incident>> PostIncident(Incident incident)
+        public async Task<ActionResult<Incident>> PostIncident(IncidentDTO incidentDTO)
         {
-            if (_context.Incidents == null)
+            try
             {
-                return Problem("Entity set 'AdministradorDbContext.Incidents'  is null.");
+                var incident = await _incidentDAO.CreateIncident(incidentDTO);
+                await _amqpService.SendMessageAsync(incident, "perito-incidente-create");
+                return CreatedAtAction("GetIncident", new { id = incident.Id }, incident);
             }
-            _context.Incidents.Add(incident);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetIncident", new { id = incident.Id }, incident);
-        }
-
-        // DELETE: api/Incidents/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteIncident(Guid id)
-        {
-            if (_context.Incidents == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                return BadRequest(ex.Message);
             }
-            var incident = await _context.Incidents.FindAsync(id);
-            if (incident == null)
-            {
-                return NotFound();
-            }
-
-            _context.Incidents.Remove(incident);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool IncidentExists(Guid id)
-        {
-            return (_context.Incidents?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

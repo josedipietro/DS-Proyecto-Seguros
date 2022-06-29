@@ -25,5 +25,22 @@ namespace Administrador.Persistence.DAOs
                 .Where(x => IncidentId.HasValue ? x.IncidentId == IncidentId : true)
                 .ToListAsync();
         }
+
+        public async Task<RepairRequest> CreateRepairRequest(RepairRequestDTO repairRequestDTO)
+        {
+            var repairRequest = new RepairRequest
+            {
+                Id = repairRequestDTO.Id,
+                IncidentId = repairRequestDTO.IncidentId,
+                QuotationId = repairRequestDTO.QuotationId,
+                Status = repairRequestDTO.Status,
+                VehicleId = repairRequestDTO.VehicleId
+            };
+
+            _context.RepairRequests.Add(repairRequest);
+            await _context.SaveChangesAsync();
+
+            return repairRequest;
+        }
     }
 }

@@ -68,9 +68,15 @@ namespace Administrador.Controllers
         [HttpPost]
         public async Task<ActionResult<Insured>> PostInsured(InsuredDTO insuredDTO)
         {
-            var insured = await _insuredDAO.CreateInsured(insuredDTO);
-
-            return CreatedAtAction("GetInsured", new { id = insured.Id }, insured);
+            try
+            {
+                var insured = await _insuredDAO.CreateInsured(insuredDTO);
+                return CreatedAtAction("GetInsured", new { id = insured.Id }, insured);
+            }
+            catch (DbUpdateException)
+            {
+                throw;
+            }
         }
 
         // DELETE: api/Insureds/5

@@ -1,3 +1,5 @@
+using Administrador.Persistence.Entities;
+
 namespace Administrador.BussinesLogic.DTOs
 {
     public class IncidentDTO
@@ -12,4 +14,6 @@ namespace Administrador.BussinesLogic.DTOs
 
         public Guid? ThirdPolicyId { get; set; }
     }
+
+
 }

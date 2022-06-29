@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Administrador.Persistence.Database;
 using Administrador.Persistence.Entities;
+using Administrador.BussinesLogic.DTOs;
+using Administrador.Persistence.DAOs;
+using Base.Services.RabbitMQ;
 
 namespace Administrador.Controllers
 {
@@ -14,33 +17,27 @@ namespace Administrador.Controllers
     [ApiController]
     public class RepairRequestsController : ControllerBase
     {
-        private readonly AdministradorDbContext _context;
+        private readonly IRepairRequestDAO _repairRequestDAO;
 
-        public RepairRequestsController(AdministradorDbContext context)
+        public RepairRequestsController(IRepairRequestDAO repairRequestDAO)
         {
-            _context = context;
+            _repairRequestDAO = repairRequestDAO;
         }
 
         // GET: api/RepairRequests
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RepairRequest>>> GetRepairRequests()
+        public async Task<ActionResult<IEnumerable<RepairRequest>>> GetRepairRequests(
+            Guid? IncidentId
+        )
         {
-          if (_context.RepairRequests == null)
-          {
-              return NotFound();
-          }
-            return await _context.RepairRequests.ToListAsync();
+            return await _repairRequestDAO.GetRepairRequests(IncidentId);
         }
 
         // GET: api/RepairRequests/5
         [HttpGet("{id}")]
         public async Task<ActionResult<RepairRequest>> GetRepairRequest(Guid id)
         {
-          if (_context.RepairRequests == null)
-          {
-              return NotFound();
-          }
-            var repairRequest = await _context.RepairRequests.FindAsync(id);
+            var repairRequest = await _repairRequestDAO.GetRepairRequest(id);
 
             if (repairRequest == null)
             {
@@ -48,91 +45,6 @@ namespace Administrador.Controllers
             }
 
             return repairRequest;
-        }
-
-        // PUT: api/RepairRequests/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutRepairRequest(Guid id, RepairRequest repairRequest)
-        {
-            if (id != repairRequest.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(repairRequest).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RepairRequestExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/RepairRequests
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<RepairRequest>> PostRepairRequest(RepairRequest repairRequest)
-        {
-          if (_context.RepairRequests == null)
-          {
-              return Problem("Entity set 'AdministradorDbContext.RepairRequests'  is null.");
-          }
-            _context.RepairRequests.Add(repairRequest);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (RepairRequestExists(repairRequest.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetRepairRequest", new { id = repairRequest.Id }, repairRequest);
-        }
-
-        // DELETE: api/RepairRequests/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRepairRequest(Guid id)
-        {
-            if (_context.RepairRequests == null)
-            {
-                return NotFound();
-            }
-            var repairRequest = await _context.RepairRequests.FindAsync(id);
-            if (repairRequest == null)
-            {
-                return NotFound();
-            }
-
-            _context.RepairRequests.Remove(repairRequest);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool RepairRequestExists(Guid id)
-        {
-            return (_context.RepairRequests?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

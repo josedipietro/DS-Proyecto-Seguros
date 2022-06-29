@@ -68,12 +68,39 @@ builder.Services.AddMassTransit(configurator =>
             );
             // configure endpoints
             cfg.ReceiveEndpoint(
-                "administrador-user",
+                "administrador-incident-update",
                 endpointConfigurator =>
                 {
                     endpointConfigurator.ClearSerialization();
                     endpointConfigurator.UseRawJsonSerializer();
-                    endpointConfigurator.Consumer<UserConsumer>();
+                    endpointConfigurator.Consumer<IncidentConsumer>();
+                }
+            );
+            cfg.ReceiveEndpoint(
+                "administrador-repair-request-create",
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ClearSerialization();
+                    endpointConfigurator.UseRawJsonSerializer();
+                    endpointConfigurator.Consumer<RepairRequestConsumer>();
+                }
+            );
+            cfg.ReceiveEndpoint(
+                "administrador-part-quotation-create",
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ClearSerialization();
+                    endpointConfigurator.UseRawJsonSerializer();
+                    endpointConfigurator.Consumer<PartQuotationConsumer>();
+                }
+            );
+            cfg.ReceiveEndpoint(
+                "administrador-part-create",
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ClearSerialization();
+                    endpointConfigurator.UseRawJsonSerializer();
+                    endpointConfigurator.Consumer<PartConsumer>();
                 }
             );
         }

@@ -99,19 +99,28 @@ namespace Administrador.Controllers
         [HttpPost]
         public async Task<ActionResult<Enterprise>> PostEnterprise(EnterpriseDTO enterpriseDTO)
         {
-            var enterprise = await _enterpriseDAO.CreateEnterprise(enterpriseDTO);
-
-            switch (enterprise.EnterpriseType)
+            try
             {
-                case EnumEnterpriseType.Workshop:
-                    await _amqpService.SendMessageAsync(enterprise, "workshop-enterprise-create");
-                    break;
-                case EnumEnterpriseType.Supplier:
-                    await _amqpService.SendMessageAsync(enterprise, "supplier-enterprise-create");
-                    break;
-            }
+                var enterprise = await _enterpriseDAO.CreateEnterprise(enterpriseDTO);
 
-            return CreatedAtAction("GetEnterprise", new { id = enterprise.Id }, enterprise);
+                switch (enterprise.EnterpriseType)
+                {
+                    case EnumEnterpriseType.Workshop:
+                        await _amqpService.SendMessageAsync(enterprise, "taller-enterprise-create");
+                        break;
+                    case EnumEnterpriseType.Supplier:
+                        await _amqpService.SendMessageAsync(
+                            enterprise,
+                            "proveedor-enterprise-create"
+                        );
+                        break;
+                }
+                return CreatedAtAction("GetEnterprise", new { id = enterprise.Id }, enterprise);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE: api/Enterprises/5
@@ -132,13 +141,13 @@ namespace Administrador.Controllers
                     case EnumEnterpriseType.Workshop:
                         await _amqpService.SendMessageAsync(
                             enterpriseToUpdate,
-                            "workshop-enterprise-update"
+                            "taller-enterprise-update"
                         );
                         break;
                     case EnumEnterpriseType.Supplier:
                         await _amqpService.SendMessageAsync(
                             enterpriseToUpdate,
-                            "supplier-enterprise-update"
+                            "proveedor-enterprise-update"
                         );
                         break;
                 }

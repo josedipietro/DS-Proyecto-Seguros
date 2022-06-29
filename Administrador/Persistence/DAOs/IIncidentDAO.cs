@@ -13,5 +13,6 @@ namespace Administrador.Persistence.DAOs
             Guid? thirdPolicyId
         );
         Task<Incident> CreateIncident(IncidentDTO incidentDTO);
+        Task<Incident> UpdateStatus(Incident incident, EnumIncidentStatus status);
     }
 }

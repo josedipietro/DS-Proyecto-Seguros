@@ -9,5 +9,7 @@ namespace Administrador.Persistence.DAOs
         Task<List<Part>> GetParts(Guid? repairRequestId);
 
         Task<Part> UpdateStatus(Part part, EnumPartStatus status);
+
+        Task<Part> CreatePart(PartDTO partDTO);
     }
 }

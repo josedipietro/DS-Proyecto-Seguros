@@ -81,5 +81,13 @@ namespace Administrador.Persistence.DAOs
             await _context.SaveChangesAsync();
             return incident;
         }
+
+        public async Task<Incident> UpdateStatus(Incident incident, EnumIncidentStatus status)
+        {
+            incident.Status = status;
+            _context.Incidents.Update(incident);
+            await _context.SaveChangesAsync();
+            return incident;
+        }
     }
 }

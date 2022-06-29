@@ -90,28 +90,29 @@ namespace Administrador.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(UserDTO userDTO)
         {
-            var user = await _userDAO.CreateUser(userDTO);
-
-            // Send message to RabbitMQ
-
-            switch (user.Role)
+            try
             {
-                case EnumRole.Workshop:
-                    await _amqpService.SendMessageAsync(user, "workshop-user-create");
-                    break;
-                case EnumRole.Supplier:
-                    await _amqpService.SendMessageAsync(user, "supplier-user-create");
-                    break;
-                case EnumRole.Proficient:
-                    await _amqpService.SendMessageAsync(user, "proficient-user-create");
-                    break;
-                default:
-                    break;
+                var user = await _userDAO.CreateUser(userDTO);
+                switch (user.Role)
+                {
+                    case EnumRole.Workshop:
+                        await _amqpService.SendMessageAsync(user, "workshop-user-create");
+                        break;
+                    case EnumRole.Supplier:
+                        await _amqpService.SendMessageAsync(user, "supplier-user-create");
+                        break;
+                    case EnumRole.Proficient:
+                        await _amqpService.SendMessageAsync(user, "proficient-user-create");
+                        break;
+                    default:
+                        break;
+                }
+                return CreatedAtAction("GetUser", new { id = user.Id }, user);
             }
-
-            //TODO: CREATE USER IN LDAP
-
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE: api/Users/5

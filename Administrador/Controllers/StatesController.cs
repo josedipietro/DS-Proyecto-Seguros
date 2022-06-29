@@ -15,14 +15,11 @@ namespace Administrador.Controllers
     [ApiController]
     public class StatesController : ControllerBase
     {
-        private readonly AdministradorDbContext _context;
+        private readonly IStateDAO _stateDAO;
 
-        private readonly StateDAO _stateDAO;
-
-        public StatesController(AdministradorDbContext context)
+        public StatesController(IStateDAO stateDAO)
         {
-            _stateDAO = new StateDAO(context);
-            _context = context;
+            _stateDAO = stateDAO;
         }
 
         // GET: api/States
@@ -36,7 +33,7 @@ namespace Administrador.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<State>> GetState(int id)
         {
-            var state = await _context.States.FindAsync(id);
+            var state = await _stateDAO.GetState(id);
 
             if (state == null)
             {
