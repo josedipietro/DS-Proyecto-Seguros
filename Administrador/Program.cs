@@ -1,6 +1,9 @@
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Administrador.Persistence.Database;
+using Base.Services.RabbitMQ;
+using MassTransit;
+using Administrador.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +14,6 @@ builder.Services.AddControllers();
 // Add  a DB context to the container.
 builder.Services.AddDbContext<AdministradorDbContext>(options =>
 {
-       
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
@@ -26,6 +28,36 @@ builder.Services.AddSwaggerGen(options =>
             Version = "v1",
             Title = "Administrator API",
             Description = "An ASP.NET Core Web API for managing Administrator Platform",
+        }
+    );
+});
+
+// Configure RabbitMQ
+builder.Services.Configure<AmqpInfo>(builder.Configuration.GetSection("amqp"));
+builder.Services.AddSingleton<AmqpService>();
+
+// Configure MassTransit RabbitMQ
+builder.Services.AddMassTransit(configurator =>
+{
+    configurator.UsingRabbitMq(
+        (context, cfg) =>
+        {
+            cfg.Host(
+                new Uri(builder.Configuration["amqp:uri"]),
+                hostConfigurator =>
+                {
+                    hostConfigurator.Username(builder.Configuration["amqp:username"]);
+                    hostConfigurator.Password(builder.Configuration["amqp:password"]);
+                }
+            );
+            // configure endpoints
+            cfg.ReceiveEndpoint(
+                "administrador/user",
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.Consumer<UserConsumer>();
+                }
+            );
         }
     );
 });

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Administrador.Persistence.Database;
 using Administrador.Persistence.Entities;
+using Base.Services.RabbitMQ;
 
 namespace Administrador.Controllers
 {
@@ -15,20 +16,22 @@ namespace Administrador.Controllers
     public class UsersController : ControllerBase
     {
         private readonly AdministradorDbContext _context;
+        private readonly AmqpService _amqpService;
 
-        public UsersController(AdministradorDbContext context)
+        public UsersController(AdministradorDbContext context, AmqpService amqpService)
         {
             _context = context;
+            _amqpService = amqpService ?? throw new ArgumentNullException(nameof(amqpService));
         }
 
         // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-          if (_context.Users == null)
-          {
-              return NotFound();
-          }
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
             return await _context.Users.ToListAsync();
         }
 
@@ -36,10 +39,10 @@ namespace Administrador.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(Guid id)
         {
-          if (_context.Users == null)
-          {
-              return NotFound();
-          }
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
             var user = await _context.Users.FindAsync(id);
 
             if (user == null)
@@ -86,12 +89,15 @@ namespace Administrador.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-          if (_context.Users == null)
-          {
-              return Problem("Entity set 'AdministradorDbContext.Users'  is null.");
-          }
+            if (_context.Users == null)
+            {
+                return Problem("Entity set 'AdministradorDbContext.Users'  is null.");
+            }
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
+
+            // Send message to RabbitMQ
+            await _amqpService.SendMessageAsync(user, "administrador/user");
 
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
