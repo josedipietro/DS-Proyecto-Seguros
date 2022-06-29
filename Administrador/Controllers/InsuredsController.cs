@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Administrador.Persistence.Database;
 using Administrador.Persistence.Entities;
+using Administrador.Persistence.DAOs;
+using Administrador.BussinesLogic.DTOs;
 
 namespace Administrador.Controllers
 {
@@ -14,84 +15,60 @@ namespace Administrador.Controllers
     [ApiController]
     public class InsuredsController : ControllerBase
     {
-        private readonly AdministradorDbContext _context;
+        private readonly IInsuredDAO _insuredDAO;
 
-        public InsuredsController(AdministradorDbContext context)
+        public InsuredsController(IInsuredDAO insuredDAO)
         {
-            _context = context;
+            _insuredDAO = insuredDAO;
         }
 
         // GET: api/Insureds
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Insured>>> GetInsureds()
         {
-          if (_context.Insureds == null)
-          {
-              return NotFound();
-          }
-            return await _context.Insureds.ToListAsync();
+            return await _insuredDAO.GetInsureds();
         }
 
         // GET: api/Insureds/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Insured>> GetInsured(Guid id)
         {
-          if (_context.Insureds == null)
-          {
-              return NotFound();
-          }
-            var insured = await _context.Insureds.FindAsync(id);
+            var insured = await _insuredDAO.GetInsured(id);
 
             if (insured == null)
             {
                 return NotFound();
             }
-
             return insured;
         }
 
         // PUT: api/Insureds/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutInsured(Guid id, Insured insured)
+        public async Task<ActionResult<Insured>> PutInsured(Guid id, InsuredDTO insured)
         {
-            if (id != insured.Id)
+            var insuredToUpdate = await _insuredDAO.GetInsured(id);
+
+            if (insuredToUpdate == null)
             {
-                return BadRequest();
+                return NotFound();
             }
-
-            _context.Entry(insured).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                return await _insuredDAO.UpdateInsured(insuredToUpdate, insured);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!InsuredExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
-
-            return NoContent();
         }
 
         // POST: api/Insureds
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Insured>> PostInsured(Insured insured)
+        public async Task<ActionResult<Insured>> PostInsured(InsuredDTO insuredDTO)
         {
-          if (_context.Insureds == null)
-          {
-              return Problem("Entity set 'AdministradorDbContext.Insureds'  is null.");
-          }
-            _context.Insureds.Add(insured);
-            await _context.SaveChangesAsync();
+            var insured = await _insuredDAO.CreateInsured(insuredDTO);
 
             return CreatedAtAction("GetInsured", new { id = insured.Id }, insured);
         }
@@ -100,25 +77,21 @@ namespace Administrador.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInsured(Guid id)
         {
-            if (_context.Insureds == null)
-            {
-                return NotFound();
-            }
-            var insured = await _context.Insureds.FindAsync(id);
+            var insured = await _insuredDAO.GetInsured(id);
+
             if (insured == null)
             {
                 return NotFound();
             }
-
-            _context.Insureds.Remove(insured);
-            await _context.SaveChangesAsync();
-
+            try
+            {
+                insured = await _insuredDAO.DeleteInsured(insured);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
             return NoContent();
-        }
-
-        private bool InsuredExists(Guid id)
-        {
-            return (_context.Insureds?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

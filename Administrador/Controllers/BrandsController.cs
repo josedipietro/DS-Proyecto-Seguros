@@ -18,15 +18,11 @@ namespace Administrador.Controllers
     [ApiController]
     public class BrandsController : ControllerBase
     {
-        private readonly AdministradorDbContext _context;
-        private readonly BrandDAO _brandDAO;
-        private readonly AmqpService _amqpService;
+        private readonly IBrandDAO _brandDAO;
 
-        public BrandsController(AdministradorDbContext context,AmqpService amqpService)
+        public BrandsController(IBrandDAO brandDAO)
         {
-            _brandDAO = new BrandDAO(context);
-            _context = context;
-            _amqpService = amqpService ?? throw new ArgumentNullException(nameof(amqpService));
+            _brandDAO = brandDAO;
         }
 
         // GET: api/Brands
@@ -100,10 +96,6 @@ namespace Administrador.Controllers
                     throw;
                 }
             }
-
-            var brandModel = await _brandDAO.Get(brand.Code);
-
-            await _amqpService.SendMessageAsync(brand, "administrador-user");
 
             return CreatedAtAction("GetBrand", new { id = brand.Code }, brand);
         }

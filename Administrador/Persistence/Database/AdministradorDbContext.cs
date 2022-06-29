@@ -28,5 +28,9 @@ namespace Administrador.Persistence.Database
         public virtual DbSet<RepairRequest> RepairRequests { get; set; }
         public virtual DbSet<PartQuotation> PartQuotations { get; set; }
 
+        public Task<int> SaveChangesAsync()
+        {
+            return base.SaveChangesAsync();
+        }
     }
 }

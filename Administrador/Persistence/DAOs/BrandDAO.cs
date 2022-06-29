@@ -9,11 +9,11 @@ using System.Linq;
 
 namespace Administrador.Persistence.DAOs
 {
-    public class BrandDAO
+    public class BrandDAO : IBrandDAO
     {
-        private readonly AdministradorDbContext _context;
+        private readonly IAdministradorDbContext _context;
 
-        public BrandDAO(AdministradorDbContext context)
+        public BrandDAO(IAdministradorDbContext context)
         {
             _context = context;
         }

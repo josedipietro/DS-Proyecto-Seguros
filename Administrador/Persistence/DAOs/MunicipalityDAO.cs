@@ -4,11 +4,11 @@ using Administrador.Persistence.Database;
 
 namespace Administrador.Persistence.DAOs
 {
-    public class MunicipalityDAO
+    public class MunicipalityDAO : IMunicipalityDAO
     {
-        private readonly AdministradorDbContext _context;
+        private readonly IAdministradorDbContext _context;
 
-        public MunicipalityDAO(AdministradorDbContext context)
+        public MunicipalityDAO(IAdministradorDbContext context)
         {
             _context = context;
         }

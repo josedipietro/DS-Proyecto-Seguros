@@ -4,11 +4,11 @@ using Administrador.Persistence.Database;
 
 namespace Administrador.Persistence.DAOs
 {
-    public class StateDAO
+    public class StateDAO : IStateDAO
     {
-        private readonly AdministradorDbContext _context;
+        private readonly IAdministradorDbContext _context;
 
-        public StateDAO(AdministradorDbContext context)
+        public StateDAO(IAdministradorDbContext context)
         {
             _context = context;
         }

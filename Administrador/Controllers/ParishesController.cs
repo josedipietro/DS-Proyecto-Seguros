@@ -15,13 +15,11 @@ namespace Administrador.Controllers
     [ApiController]
     public class ParishesController : ControllerBase
     {
-        private readonly AdministradorDbContext _context;
-        private readonly ParishDAO _parishDAO;
+        private readonly IParishDAO _parishDAO;
 
-        public ParishesController(AdministradorDbContext context)
+        public ParishesController(IParishDAO parishDAO)
         {
-            _parishDAO = new ParishDAO(context);
-            _context = context;
+            _parishDAO = parishDAO;
         }
 
         // GET: api/Parishes

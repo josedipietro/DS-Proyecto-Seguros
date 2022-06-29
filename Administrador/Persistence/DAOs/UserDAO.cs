@@ -5,11 +5,11 @@ using Administrador.BussinesLogic.DTOs;
 
 namespace Administrador.Persistence.DAOs
 {
-    public class UserDAO
+    public class UserDAO : IUserDAO
     {
-        private readonly AdministradorDbContext _context;
+        private readonly IAdministradorDbContext _context;
 
-        public UserDAO(AdministradorDbContext context)
+        public UserDAO(IAdministradorDbContext context)
         {
             _context = context;
         }
@@ -84,6 +84,39 @@ namespace Administrador.Persistence.DAOs
                 IsActive = true,
             };
             _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return user;
+        }
+
+        // Update User
+        public async Task<User> UpdateUser(User user, UserDTO userDTO)
+        {
+            if (new List<EnumRole> { EnumRole.Workshop, EnumRole.Supplier }.Contains(userDTO.Role))
+            {
+                if (userDTO.EnterpriseId == null)
+                {
+                    throw new Exception("EnterpriseId is required");
+                }
+
+                var enterprise = await _context.Enterprises
+                    .Where(b => (b.IsActive == true) && (b.Id == userDTO.EnterpriseId))
+                    .FirstOrDefaultAsync();
+                if (enterprise == null)
+                {
+                    throw new Exception("Enterprise not found");
+                }
+            }
+            else
+            {
+                userDTO.EnterpriseId = null;
+            }
+
+            user.FirstName = userDTO.FirstName;
+            user.LastName = userDTO.LastName;
+            user.Email = userDTO.Email;
+            user.Password = userDTO.Password;
+            user.Role = userDTO.Role;
+            user.EnterpriseId = userDTO.EnterpriseId;
             await _context.SaveChangesAsync();
             return user;
         }

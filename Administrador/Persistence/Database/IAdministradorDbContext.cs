@@ -20,5 +20,7 @@ namespace Administrador.Persistence.Database
         DbSet<Part> Parts { get; set; }
         DbSet<RepairRequest> RepairRequests { get; set; }
         DbSet<PartQuotation> PartQuotations { get; set; }
+
+        Task<int> SaveChangesAsync();
     }
 }

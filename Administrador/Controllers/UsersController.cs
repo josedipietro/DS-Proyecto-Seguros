@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Administrador.Persistence.Database;
 using Administrador.Persistence.Entities;
+using Administrador.Persistence.DAOs;
+using Administrador.BussinesLogic.DTOs;
 using Base.Services.RabbitMQ;
 
 namespace Administrador.Controllers
@@ -15,35 +17,30 @@ namespace Administrador.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly AdministradorDbContext _context;
+        private readonly IUserDAO _userDAO;
         private readonly AmqpService _amqpService;
 
-        public UsersController(AdministradorDbContext context, AmqpService amqpService)
+        public UsersController(IUserDAO userDAO, AmqpService amqpService)
         {
-            _context = context;
+            _userDAO = userDAO;
             _amqpService = amqpService ?? throw new ArgumentNullException(nameof(amqpService));
         }
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers(
+            EnumRole? role,
+            Guid? enterpriseId
+        )
         {
-            if (_context.Users == null)
-            {
-                return NotFound();
-            }
-            return await _context.Users.ToListAsync();
+            return await _userDAO.GetUsers(role, enterpriseId);
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(Guid id)
         {
-            if (_context.Users == null)
-            {
-                return NotFound();
-            }
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userDAO.GetUser(id);
 
             if (user == null)
             {
@@ -56,48 +53,63 @@ namespace Administrador.Controllers
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, User user)
+        public async Task<ActionResult<User>> PutUser(Guid id, UserDTO userDTO)
         {
-            if (id != user.Id)
+            var user = await _userDAO.GetUser(id);
+            if (user == null)
             {
-                return BadRequest();
+                return NotFound();
             }
-
-            _context.Entry(user).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                user = await _userDAO.UpdateUser(user, userDTO);
+                switch (user.Role)
+                {
+                    case EnumRole.Workshop:
+                        await _amqpService.SendMessageAsync(user, "workshop-user-update");
+                        break;
+                    case EnumRole.Supplier:
+                        await _amqpService.SendMessageAsync(user, "supplier-user-update");
+                        break;
+                    case EnumRole.Proficient:
+                        await _amqpService.SendMessageAsync(user, "proficient-user-update");
+                        break;
+                    default:
+                        break;
+                }
+                return user;
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
-
-            return NoContent();
         }
 
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<User>> PostUser(UserDTO userDTO)
         {
-            if (_context.Users == null)
-            {
-                return Problem("Entity set 'AdministradorDbContext.Users'  is null.");
-            }
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            var user = await _userDAO.CreateUser(userDTO);
 
             // Send message to RabbitMQ
-            await _amqpService.SendMessageAsync(user, "administrador-user");
+
+            switch (user.Role)
+            {
+                case EnumRole.Workshop:
+                    await _amqpService.SendMessageAsync(user, "workshop-user-create");
+                    break;
+                case EnumRole.Supplier:
+                    await _amqpService.SendMessageAsync(user, "supplier-user-create");
+                    break;
+                case EnumRole.Proficient:
+                    await _amqpService.SendMessageAsync(user, "proficient-user-create");
+                    break;
+                default:
+                    break;
+            }
+
+            //TODO: CREATE USER IN LDAP
 
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
@@ -106,25 +118,27 @@ namespace Administrador.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
-            if (_context.Users == null)
-            {
-                return NotFound();
-            }
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userDAO.GetUser(id);
             if (user == null)
             {
                 return NotFound();
             }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
+            user = await _userDAO.DeleteUser(user);
+            switch (user.Role)
+            {
+                case EnumRole.Workshop:
+                    await _amqpService.SendMessageAsync(user, "workshop-user-update");
+                    break;
+                case EnumRole.Supplier:
+                    await _amqpService.SendMessageAsync(user, "supplier-user-update");
+                    break;
+                case EnumRole.Proficient:
+                    await _amqpService.SendMessageAsync(user, "proficient-user-update");
+                    break;
+                default:
+                    break;
+            }
             return NoContent();
-        }
-
-        private bool UserExists(Guid id)
-        {
-            return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

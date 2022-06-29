@@ -1,6 +1,7 @@
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Administrador.Persistence.Database;
+using Administrador.Persistence.DAOs;
 using Base.Services.RabbitMQ;
 using MassTransit;
 using Administrador.Consumers;
@@ -16,6 +17,21 @@ builder.Services.AddDbContext<AdministradorDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+builder.Services.AddTransient<IAdministradorDbContext, AdministradorDbContext>();
+builder.Services.AddTransient<IBrandDAO, BrandDAO>();
+builder.Services.AddTransient<IEnterpriseDAO, EnterpriseDAO>();
+builder.Services.AddTransient<IInsuredDAO, InsuredDAO>();
+builder.Services.AddTransient<IMunicipalityDAO, MunicipalityDAO>();
+builder.Services.AddTransient<IUserDAO, UserDAO>();
+builder.Services.AddTransient<IStateDAO, StateDAO>();
+builder.Services.AddTransient<IParishDAO, ParishDAO>();
+builder.Services.AddTransient<IVehicleDAO, VehicleDAO>();
+builder.Services.AddTransient<IPolicyDAO, PolicyDAO>();
+builder.Services.AddTransient<IIncidentDAO, IncidentDAO>();
+builder.Services.AddTransient<IRepairRequestDAO, RepairRequestDAO>();
+builder.Services.AddTransient<IPartDAO, PartDAO>();
+builder.Services.AddTransient<IPartQuotationDAO, PartQuotationDAO>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -56,7 +72,7 @@ builder.Services.AddMassTransit(configurator =>
                 endpointConfigurator =>
                 {
                     endpointConfigurator.ClearSerialization();
-                    endpointConfigurator.UseRawJsonSerializer(); 
+                    endpointConfigurator.UseRawJsonSerializer();
                     endpointConfigurator.Consumer<UserConsumer>();
                 }
             );

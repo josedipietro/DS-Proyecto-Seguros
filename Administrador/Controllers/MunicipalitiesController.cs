@@ -15,14 +15,11 @@ namespace Administrador.Controllers
     [ApiController]
     public class MunicipalitiesController : ControllerBase
     {
-        private readonly AdministradorDbContext _context;
+        private readonly IMunicipalityDAO _municipalityDAO;
 
-        private readonly MunicipalityDAO _municipalityDAO;
-
-        public MunicipalitiesController(AdministradorDbContext context)
+        public MunicipalitiesController(IMunicipalityDAO municipalityDAO)
         {
-            _municipalityDAO = new MunicipalityDAO(context);
-            _context = context;
+            _municipalityDAO = municipalityDAO;
         }
 
         // GET: api/Municipalities
@@ -36,7 +33,7 @@ namespace Administrador.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Municipality>> GetMunicipality(int id)
         {
-            var municipality = await _context.Municipalities.FindAsync(id);
+            var municipality = await _municipalityDAO.GetMunicipality(id);
 
             if (municipality == null)
             {

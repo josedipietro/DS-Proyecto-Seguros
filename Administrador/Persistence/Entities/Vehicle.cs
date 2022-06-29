@@ -6,18 +6,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Administrador.Persistence.Entities
 {
-
-    public enum EnumBodyworkType {
+    public enum EnumBodyworkType
+    {
         Sedan,
         Convertible,
         PickUp,
         Corf,
         Hatchback,
     }
+
     [Index(nameof(Plate), IsUnique = true)]
     [Index(nameof(SerialMotorNumber), IsUnique = true)]
     [Index(nameof(SerialChasisNumber), IsUnique = true)]
-    public class Vehicle: BaseEntity
+    public class Vehicle : BaseEntity
     {
         public string Plate { get; set; }
         public int Year { get; set; }

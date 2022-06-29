@@ -25,10 +25,10 @@ namespace Administrador.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Incident>>> GetIncidents()
         {
-          if (_context.Incidents == null)
-          {
-              return NotFound();
-          }
+            if (_context.Incidents == null)
+            {
+                return NotFound();
+            }
             return await _context.Incidents.ToListAsync();
         }
 
@@ -36,10 +36,10 @@ namespace Administrador.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Incident>> GetIncident(Guid id)
         {
-          if (_context.Incidents == null)
-          {
-              return NotFound();
-          }
+            if (_context.Incidents == null)
+            {
+                return NotFound();
+            }
             var incident = await _context.Incidents.FindAsync(id);
 
             if (incident == null)
@@ -86,10 +86,10 @@ namespace Administrador.Controllers
         [HttpPost]
         public async Task<ActionResult<Incident>> PostIncident(Incident incident)
         {
-          if (_context.Incidents == null)
-          {
-              return Problem("Entity set 'AdministradorDbContext.Incidents'  is null.");
-          }
+            if (_context.Incidents == null)
+            {
+                return Problem("Entity set 'AdministradorDbContext.Incidents'  is null.");
+            }
             _context.Incidents.Add(incident);
             await _context.SaveChangesAsync();
 

@@ -20,8 +20,10 @@ namespace Administrador.Persistence.Entities
         public DateTime? EndDate { get; set; }
         public Guid VehicleId { get; set; }
         public virtual Vehicle Vehicle { get; set; }
+
         [InverseProperty("Policy")]
         public virtual ICollection<Incident> Incidents { get; set; }
+
         [InverseProperty("ThirdPolicy")]
         public virtual ICollection<Incident> ThirdIncidents { get; set; }
     }

@@ -9,6 +9,7 @@ using Administrador.Persistence.Database;
 using Administrador.Persistence.Entities;
 using Administrador.Persistence.DAOs;
 using Administrador.BussinesLogic.DTOs;
+using Base.Services.RabbitMQ;
 
 namespace Administrador.Controllers
 {
@@ -16,14 +17,13 @@ namespace Administrador.Controllers
     [ApiController]
     public class EnterprisesController : ControllerBase
     {
-        private readonly AdministradorDbContext _context;
+        private readonly IEnterpriseDAO _enterpriseDAO;
+        private readonly AmqpService _amqpService;
 
-        private readonly EnterpriseDAO _enterpriseDAO;
-
-        public EnterprisesController(AdministradorDbContext context)
+        public EnterprisesController(IEnterpriseDAO enterpriseDAO, AmqpService amqpService)
         {
-            _enterpriseDAO = new EnterpriseDAO(context);
-            _context = context;
+            _enterpriseDAO = enterpriseDAO;
+            _amqpService = amqpService ?? throw new ArgumentNullException(nameof(amqpService));
         }
 
         // GET: api/Enterprises
@@ -58,7 +58,7 @@ namespace Administrador.Controllers
             EnterpriseUpdateDTO enterprise
         )
         {
-            var enterpriseToUpdate = await _context.Enterprises.FindAsync(id);
+            var enterpriseToUpdate = await _enterpriseDAO.GetEnterprise(id);
 
             if (enterpriseToUpdate == null)
             {
@@ -67,7 +67,26 @@ namespace Administrador.Controllers
 
             try
             {
-                return await _enterpriseDAO.UpdateEnterprise(enterpriseToUpdate, enterprise);
+                enterpriseToUpdate = await _enterpriseDAO.UpdateEnterprise(
+                    enterpriseToUpdate,
+                    enterprise
+                );
+                switch (enterpriseToUpdate.EnterpriseType)
+                {
+                    case EnumEnterpriseType.Workshop:
+                        await _amqpService.SendMessageAsync(
+                            enterpriseToUpdate,
+                            "workshop-enterprise-update"
+                        );
+                        break;
+                    case EnumEnterpriseType.Supplier:
+                        await _amqpService.SendMessageAsync(
+                            enterpriseToUpdate,
+                            "supplier-enterprise-update"
+                        );
+                        break;
+                }
+                return enterpriseToUpdate;
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -81,14 +100,25 @@ namespace Administrador.Controllers
         public async Task<ActionResult<Enterprise>> PostEnterprise(EnterpriseDTO enterpriseDTO)
         {
             var enterprise = await _enterpriseDAO.CreateEnterprise(enterpriseDTO);
-            return CreatedAtAction("GetEnterprise", enterprise);
+
+            switch (enterprise.EnterpriseType)
+            {
+                case EnumEnterpriseType.Workshop:
+                    await _amqpService.SendMessageAsync(enterprise, "workshop-enterprise-create");
+                    break;
+                case EnumEnterpriseType.Supplier:
+                    await _amqpService.SendMessageAsync(enterprise, "supplier-enterprise-create");
+                    break;
+            }
+
+            return CreatedAtAction("GetEnterprise", new { id = enterprise.Id }, enterprise);
         }
 
         // DELETE: api/Enterprises/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEnterprise(Guid id)
         {
-            var enterpriseToUpdate = await _context.Enterprises.FindAsync(id);
+            var enterpriseToUpdate = await _enterpriseDAO.GetEnterprise(id);
 
             if (enterpriseToUpdate == null)
             {
@@ -96,18 +126,28 @@ namespace Administrador.Controllers
             }
             try
             {
-                await _enterpriseDAO.DeleteEnterprise(enterpriseToUpdate);
+                enterpriseToUpdate = await _enterpriseDAO.DeleteEnterprise(enterpriseToUpdate);
+                switch (enterpriseToUpdate.EnterpriseType)
+                {
+                    case EnumEnterpriseType.Workshop:
+                        await _amqpService.SendMessageAsync(
+                            enterpriseToUpdate,
+                            "workshop-enterprise-update"
+                        );
+                        break;
+                    case EnumEnterpriseType.Supplier:
+                        await _amqpService.SendMessageAsync(
+                            enterpriseToUpdate,
+                            "supplier-enterprise-update"
+                        );
+                        break;
+                }
             }
             catch (DbUpdateConcurrencyException)
             {
                 throw;
             }
             return NoContent();
-        }
-
-        private bool EnterpriseExists(Guid id)
-        {
-            return (_context.Enterprises?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
