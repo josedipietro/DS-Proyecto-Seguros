@@ -44,13 +44,13 @@ namespace Proveedor.Controllers
 
         // PUT: api/Enterprises/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        /*[HttpPut("{id}")]
         public async Task<ActionResult<Enterprise>> PutEnterprise(
             Guid id,
             EnterpriseUpdateDTO enterprise
         )
         {
-            var enterpriseToUpdate = await _context.Enterprises.FindAsync(id);
+            var enterpriseToUpdate = await _enterpriseDAO.UpdateEnterprise(id, enterprise);
 
             if (enterpriseToUpdate == null)
             {
@@ -65,7 +65,7 @@ namespace Proveedor.Controllers
             {
                 throw;
             }
-        }
+        }*/
 
         // POST: api/Enterprises
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -77,7 +77,7 @@ namespace Proveedor.Controllers
         }
 
         // DELETE: api/Enterprises/5
-        [HttpDelete("{id}")]
+        /*[HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEnterprise(Guid id)
         {
             var enterpriseToUpdate = await _context.Enterprises.FindAsync(id);
@@ -95,7 +95,7 @@ namespace Proveedor.Controllers
                 throw;
             }
             return NoContent();
-        }
+        }*/
 
         private bool EnterpriseExists(Guid id)
         {
