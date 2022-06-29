@@ -1,19 +1,17 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel;
 
 namespace Administrador.Persistence.Entities
 {
     public class BaseEntity
     {
-        public BaseEntity()
-        {
-            Id = Guid.NewGuid();
-            CreatedAt = DateTime.Now;
-        }
-
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
         public Guid Id { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public string CreatedBy { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-        public string UpdatedBy { get; set; }
+
+        [DefaultValue(true)]
+        public bool IsActive { get; set; }
     }
 }

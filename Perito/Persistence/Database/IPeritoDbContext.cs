@@ -5,9 +5,11 @@ namespace Perito.Persistence.Database
 {
     public interface IPeritoDbContext
     {
-        DbContext DbContext
-        {
-            get;
-        }
+        DbContext DbContext { get; }
+
+        DbSet<User> Users { get; set; }
+        DbSet<Incident> Incidents { get; set; }
+        DbSet<RepairRequest> RepairRequests { get; set; }
+        DbSet<Part> Parts { get; set; }
     }
 }
