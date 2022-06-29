@@ -14,10 +14,10 @@ namespace Taller.Persistence.DAOs
             _context = proveedorDbContext;
         }
 
-        /*public bool QuotationExist(Guid id)
+        public bool QuotationExist(Guid id)
         {
-            return (_context.QuotationDAO?.Any(e => e.Id == id)).GetValueOrDefault();
-        }*/
+            return (_context.Quotations?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
         public async Task<Quotation?> GetQuotation(Guid id)
         {
             return await _context.Quotations
@@ -54,23 +54,41 @@ namespace Taller.Persistence.DAOs
             return partQ;
         }
 
-        public async Task<Quotation?> Quotation(Guid id, QuotationDTO quotationDTO)
+        public async Task<Quotation?> UpdateQuotation(Guid id, QuotationDTO quotationDTO)
         {
-            var partQ = await _context.Quotations.FindAsync(id);
-            if (partQ == null) return null;
+            var quotation = await _context.Quotations.FindAsync(id);
+            if (quotation == null) return null;
 
-                partQ.QuantityToRepair = quotationDTO.QuantityToRepair;
-                partQ.Total = quotationDTO.Total;
-                partQ.NumberOfDays = quotationDTO.NumberOfDays;
-                partQ.StartDate = quotationDTO.StartDate;
-                partQ.EndDate = quotationDTO.EndDate;
-                partQ.RepairRequest = quotationDTO.RepairRequest;
-                partQ.UpdatedAt = DateTime.Now;
+            quotation.QuantityToRepair = quotationDTO.QuantityToRepair;
+            quotation.Total = quotationDTO.Total;
+            quotation.NumberOfDays = quotationDTO.NumberOfDays;
+            quotation.StartDate = quotationDTO.StartDate;
+            quotation.EndDate = quotationDTO.EndDate;
+            quotation.RepairRequest = quotationDTO.RepairRequest;
+            quotation.UpdatedAt = DateTime.Now;
 
-            _context.Quotations.Update(partQ);
+            _context.Quotations.Update(quotation);
             await _context.SaveChangesAsync();
 
-            return partQ;
+            return quotation;
         }
+
+        /*public async Task<Quotation?> UpdateRepairRequest(Guid id, QuotationDTO quotationDTO)
+        {
+            var repairRequest = await _context.RepairRequests.FindAsync(id);
+            if (repairRequest == null) return null;
+
+            repairRequest.VehicleId = repairRequestDTO.VehicleId;
+            repairRequest.PolicyId = repairRequestDTO.PolicyId;
+            repairRequest.IncidentId = repairRequestDTO.IncidentId;
+            repairRequest.QuotationId = repairRequestDTO.QuotationId;
+            repairRequest.Quotation = repairRequestDTO.Quotation;
+            repairRequest.Parts = repairRequestDTO.Parts;
+
+            _context.RepairRequests.Update(repairRequest);
+            await _context.SaveChangesAsync();
+
+            return repairRequest;
+        }*/
     }
 }

@@ -3,7 +3,7 @@ using Taller.BussinesLogic.DTOs;
 using Taller.Persistence.Database;
 using Taller.Persistence.Entities;
 
-namespace Proveedor.Persistence.DAOs
+namespace Taller.Persistence.DAOs
 {
     public class RepairRequestDAO
     {

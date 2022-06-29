@@ -32,26 +32,24 @@ namespace Taller.Persistence.DAOs
                 .FirstOrDefaultAsync();
         }*/
 
-        /*public async Task<List<Enterprise>> GetEnterprises(
-            int? parishId,
-            List<string>? brands,
-            EnumEnterpriseType? EnterpriseType
+        public async Task<List<Enterprise>> GetEnterprises(
+            //int? parishId,
+            List<string>? brands
+            //EnumEnterpriseType? EnterpriseType
         )
         {
             return await _context.Enterprises
                 .Where(
                     e =>
                         (e.IsActive == true)
-                        && (parishId.HasValue ? e.ParishId == parishId : true)
                         && (
                             brands != null || brands.Count > 0
                                 ? brands.Any(b => e.Brands.Any(eb => eb.Code == b))
                                 : true
                         )
-                        && (EnterpriseType.HasValue ? e.EnterpriseType == EnterpriseType : true)
                 )
                 .ToListAsync();
-        }*/
+        }
 
         // Delete (Change IsActive to false)
         public async Task<Enterprise> DeleteEnterprise(Enterprise enterprise)
@@ -60,7 +58,18 @@ namespace Taller.Persistence.DAOs
             await _context.SaveChangesAsync();
             return enterprise;
         }
+        public async Task<Enterprise?> DeleteEnterprise(Guid id)
+        {
+            var enterprise = await _context.Enterprises.FindAsync(id);
+            if (enterprise == null) return null;
 
+            enterprise.IsActive = false;
+
+            _context.Enterprises.Update(enterprise);
+
+            await _context.SaveChangesAsync();
+            return enterprise;
+        }
         // Create
         public async Task<Enterprise> CreateEnterprise(EnterpriseDTO enterpriseDTO)
         {
@@ -107,6 +116,11 @@ namespace Taller.Persistence.DAOs
             _context.Enterprises.Update(enterprise);
             await _context.SaveChangesAsync();
             return enterprise;
+        }
+
+        public bool EnterpriseExists(Guid id)
+        {
+            return (_context.Enterprises?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

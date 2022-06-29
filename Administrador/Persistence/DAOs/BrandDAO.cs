@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Administrador.BussinesLogic.DTOs;
 using Administrador.Persistence.Entities;
-using Base.Exceptions;
+//using Base.Exceptions;
 using Administrador.Persistence.Database;
 using System;
 using System.Collections.Generic;
