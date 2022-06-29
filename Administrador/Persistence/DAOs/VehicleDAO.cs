@@ -71,9 +71,7 @@ namespace Administrador.Persistence.DAOs
                 BodyworkType = vehicleDTO.BodyworkType,
                 InsuredId = vehicleDTO.InsuredId,
                 BrandCode = vehicleDTO.BrandCode,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now,
-                IsActive = true,
+                IsActive = true
             };
             _context.Vehicles.Add(vehicle);
             await _context.SaveChangesAsync();

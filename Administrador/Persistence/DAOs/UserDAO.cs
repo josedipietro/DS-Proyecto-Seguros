@@ -84,9 +84,7 @@ namespace Administrador.Persistence.DAOs
                 Password = userDTO.Password,
                 Role = userDTO.Role,
                 EnterpriseId = userDTO.EnterpriseId,
-                IsActive = true,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
+                IsActive = true
             };
             _context.Users.Add(user);
             await _context.SaveChangesAsync();

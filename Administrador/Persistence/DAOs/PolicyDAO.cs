@@ -75,9 +75,7 @@ namespace Administrador.Persistence.DAOs
                 StartDate = DateTime.Now,
                 VehicleId = policyDTO.VehicleId,
                 EndDate = null,
-                IsActive = true,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
+                IsActive = true
             };
             _context.Policies.Add(policy);
             await _context.SaveChangesAsync();

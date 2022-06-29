@@ -78,8 +78,6 @@ namespace Administrador.Persistence.DAOs
                 ParishId = enterpriseDTO.ParishId,
                 Brands = brands,
                 IsActive = true,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
             };
 
             _context.Enterprises.Add(enterprise);

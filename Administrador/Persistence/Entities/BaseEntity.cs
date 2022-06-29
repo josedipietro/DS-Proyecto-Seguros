@@ -11,12 +11,6 @@ namespace Administrador.Persistence.Entities
         [Key]
         public Guid Id { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public DateTime CreatedAt { get; set; }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime UpdatedAt { get; set; }
-
         [DefaultValue(true)]
         public bool IsActive { get; set; }
     }
