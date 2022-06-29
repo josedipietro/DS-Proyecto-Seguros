@@ -52,9 +52,11 @@ builder.Services.AddMassTransit(configurator =>
             );
             // configure endpoints
             cfg.ReceiveEndpoint(
-                "administrador/user",
+                "administrador-user",
                 endpointConfigurator =>
                 {
+                    endpointConfigurator.ClearSerialization();
+                    endpointConfigurator.UseRawJsonSerializer(); 
                     endpointConfigurator.Consumer<UserConsumer>();
                 }
             );

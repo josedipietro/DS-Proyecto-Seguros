@@ -97,7 +97,7 @@ namespace Administrador.Controllers
             await _context.SaveChangesAsync();
 
             // Send message to RabbitMQ
-            await _amqpService.SendMessageAsync(user, "administrador/user");
+            await _amqpService.SendMessageAsync(user, "administrador-user");
 
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
