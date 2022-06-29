@@ -32,13 +32,9 @@ namespace Base.Services.RabbitMQ
             {
                 using (var channel = conn.CreateModel())
                 {
-                    channel.QueueDeclare(
-                        queue: QueueName,
-                        durable: false,
-                        exclusive: false,
-                        autoDelete: false,
-                        arguments: null
-                    );
+
+                    // Verify if the queue exists (if not, create it)
+                    channel.QueueDeclare(QueueName, false, false, false, null);
 
                     var jsonPayload = JsonConvert.SerializeObject(message);
                     var body = Encoding.UTF8.GetBytes(jsonPayload);
@@ -63,7 +59,7 @@ namespace Base.Services.RabbitMQ
                     {
                         channel.QueueDeclare(
                             queue: QueueName,
-                            durable: false,
+                            durable: true,
                             exclusive: false,
                             autoDelete: false,
                             arguments: null
