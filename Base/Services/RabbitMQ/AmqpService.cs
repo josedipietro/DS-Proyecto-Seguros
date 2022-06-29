@@ -32,7 +32,6 @@ namespace Base.Services.RabbitMQ
             {
                 using (var channel = conn.CreateModel())
                 {
-
                     // Verify if the queue exists (if not, create it)
                     channel.QueueDeclare(QueueName, false, false, false, null);
 
