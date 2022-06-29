@@ -3,30 +3,31 @@ using Administrador.Persistence.Entities;
 using Administrador.BussinesLogic.DTOs;
 using Administrador.Persistence.DAOs;
 using System.Threading.Tasks;
+using Administrador;
 
 namespace Administrador.Consumers
 {
     public class PartConsumer : IConsumer<PartDTO>
     {
-        private readonly IPartDAO _partDAO;
+        // private readonly IPartDAO _partQuotationDAO;
 
-        public PartConsumer(IPartDAO partDAO)
-        {
-            _partDAO = partDAO;
-        }
+        // public PartConsumer(IPartDAO partQuotationDAO)
+        // {
+        //     _partQuotationDAO = partQuotationDAO;
+        // }
 
         public async Task Consume(ConsumeContext<PartDTO> context)
         {
-            var partDTO = context.Message;
+            var partQuotationDTO = context.Message;
             // create part quotation
-            try
-            {
-                await _partDAO.CreatePart(partDTO);
-            }
-            catch (Exception ex)
-            {
-                System.Console.WriteLine($"Error: {ex.Message}");
-            }
+            // try
+            // {
+            //     await _partQuotationDAO.CreatePart(partQuotationDTO);
+            // }
+            // catch (Exception ex)
+            // {
+            //     System.Console.WriteLine($"Error: {ex.Message}");
+            // }
         }
     }
 }
