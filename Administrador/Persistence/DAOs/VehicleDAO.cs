@@ -62,6 +62,7 @@ namespace Administrador.Persistence.DAOs
         {
             var vehicle = new Vehicle
             {
+                Id = Guid.NewGuid(),
                 Plate = vehicleDTO.Plate,
                 Year = vehicleDTO.Year,
                 SerialMotorNumber = vehicleDTO.SerialMotorNumber,
@@ -70,6 +71,8 @@ namespace Administrador.Persistence.DAOs
                 BodyworkType = vehicleDTO.BodyworkType,
                 InsuredId = vehicleDTO.InsuredId,
                 BrandCode = vehicleDTO.BrandCode,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
                 IsActive = true,
             };
             _context.Vehicles.Add(vehicle);

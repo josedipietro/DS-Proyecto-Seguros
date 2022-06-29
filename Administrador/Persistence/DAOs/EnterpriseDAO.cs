@@ -68,11 +68,12 @@ namespace Administrador.Persistence.DAOs
 
             var enterprise = new Enterprise
             {
-                Name = enterpriseDTO.Name,
+                Id = Guid.NewGuid(),
                 Rif = enterpriseDTO.Rif,
-                Address = enterpriseDTO.Address,
-                Phone = enterpriseDTO.Phone,
+                Name = enterpriseDTO.Name,
                 Email = enterpriseDTO.Email,
+                Phone = enterpriseDTO.Phone,
+                Address = enterpriseDTO.Address,
                 EnterpriseType = enterpriseDTO.EnterpriseType,
                 ParishId = enterpriseDTO.ParishId,
                 Brands = brands,

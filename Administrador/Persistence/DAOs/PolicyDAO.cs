@@ -70,11 +70,14 @@ namespace Administrador.Persistence.DAOs
             // create a new policy
             policy = new Policy
             {
+                Id = Guid.NewGuid(),
                 PolicyType = policyDTO.PolicyType,
                 StartDate = DateTime.Now,
                 VehicleId = policyDTO.VehicleId,
                 EndDate = null,
                 IsActive = true,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
             };
             _context.Policies.Add(policy);
             await _context.SaveChangesAsync();
