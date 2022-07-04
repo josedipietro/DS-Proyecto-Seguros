@@ -15,7 +15,8 @@ namespace Taller.BussinesLogic.DTOs
         public int NumberOfDays { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public virtual RepairRequest RepairRequest { get; set; }
+        public Guid RepairRequest { get; set; } 
+
     }
 
     /*public class PartUpdateDTO

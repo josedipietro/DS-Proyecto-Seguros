@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Administrador.Persistence.Entities;
 using Administrador.Persistence.Database;
 using Administrador.BussinesLogic.DTOs;
+using Base.Exceptions;
 
 namespace Administrador.Persistence.DAOs
 {
@@ -50,7 +51,13 @@ namespace Administrador.Persistence.DAOs
                 .FirstOrDefaultAsync();
             if (vehicle == null)
             {
-                throw new Exception("Vehicle not found");
+                throw new RCVException("Vehicle not found");
+            }
+
+            if (policyDTO.BuyDate > DateTime.Now) {
+
+
+                throw new RCVException("The buy date cannot be greather than now");
             }
 
             // If Exists Another Policy with the same VehicleId and expiredDate is null, modify it and set the expiredDate to the current date
@@ -74,6 +81,7 @@ namespace Administrador.Persistence.DAOs
                 PolicyType = policyDTO.PolicyType,
                 StartDate = DateTime.Now,
                 VehicleId = policyDTO.VehicleId,
+                BuyDate = policyDTO.BuyDate,
                 EndDate = null,
                 IsActive = true
             };

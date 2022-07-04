@@ -25,5 +25,7 @@ namespace Taller.BussinesLogic.DTOs
         public virtual Quotation Quotation { get; set; }
 
         public virtual ICollection<Part> Parts { get; set; }
+
+        public DateTime BuyDate { get; set; }
     }
 }

@@ -28,6 +28,7 @@ namespace Perito.Persistence.DAOs
             var parts = await _context.Parts.Where(p => p.IsActive && repairRequestDTO.Parts.Contains(p.Id.ToString())).ToListAsync();
             var repairRequest = new RepairRequest
             {
+                BuyDate = repairRequestDTO.BuyDate,
                 Incident = repairRequestDTO.Incident,
                 Status = repairRequestDTO.Status,
                 IncidentId = repairRequestDTO.IncidentId,

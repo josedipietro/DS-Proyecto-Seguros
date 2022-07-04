@@ -10,6 +10,8 @@ namespace Proveedor.Persistence.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Key]
         public Guid Id { get; set; }
+
+        public DateTime BuyDate { get; set; }
         public virtual ICollection<Part> Parts { get; set; }
     }
 }

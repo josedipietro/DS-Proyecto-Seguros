@@ -9,6 +9,7 @@ using Administrador.Persistence.Database;
 using Administrador.Persistence.Entities;
 using Administrador.Persistence.DAOs;
 using Administrador.BussinesLogic.DTOs;
+using Base.Exceptions;
 
 namespace Administrador.Controllers
 {

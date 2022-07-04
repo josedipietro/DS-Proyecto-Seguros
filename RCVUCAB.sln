@@ -12,13 +12,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proveedor", "Proveedor\Prov
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Base", "Base\Base.csproj", "{D1296E96-F948-42D0-8ECC-3C65244AC490}"
 EndProject
-<<<<<<< HEAD
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsTaller", "TestsTaller\TestsTaller.csproj", "{214B47CE-A14E-490B-82D1-B1E4588ACD7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RCVUcab.TallerTests", "RCVUcab.TallerTests\RCVUcab.TallerTests.csproj", "{DE8DD5E7-A81E-4EF7-A023-DF4970C92DE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RCVUcab.TallerTests", "RCVUcab.TallerTests\RCVUcab.TallerTests.csproj", "{DE8DD5E7-A81E-4EF7-A023-DF4970C92DE3}"
-=======
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RCVUcab.PeritoTests", "RCVUcab.PeritoTests\RCVUcab.PeritoTests.csproj", "{7E77E7C6-2ECB-41D8-93EB-4C16BE0E8102}"
->>>>>>> 64e4fff (Casos de prueba Perito)
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RCVUcab.PeritoTests", "RCVUcab.PeritoTests\RCVUcab.PeritoTests.csproj", "{7E77E7C6-2ECB-41D8-93EB-4C16BE0E8102}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Administrador.Tests", "Administrador.Tests\Administrador.Tests.csproj", "{5EF4B70B-F571-4DF1-B1EA-B112C6771B85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,21 +44,18 @@ Global
 		{D1296E96-F948-42D0-8ECC-3C65244AC490}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1296E96-F948-42D0-8ECC-3C65244AC490}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1296E96-F948-42D0-8ECC-3C65244AC490}.Release|Any CPU.Build.0 = Release|Any CPU
-<<<<<<< HEAD
-		{214B47CE-A14E-490B-82D1-B1E4588ACD7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{214B47CE-A14E-490B-82D1-B1E4588ACD7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{214B47CE-A14E-490B-82D1-B1E4588ACD7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{214B47CE-A14E-490B-82D1-B1E4588ACD7B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DE8DD5E7-A81E-4EF7-A023-DF4970C92DE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DE8DD5E7-A81E-4EF7-A023-DF4970C92DE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE8DD5E7-A81E-4EF7-A023-DF4970C92DE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE8DD5E7-A81E-4EF7-A023-DF4970C92DE3}.Release|Any CPU.Build.0 = Release|Any CPU
-=======
 		{7E77E7C6-2ECB-41D8-93EB-4C16BE0E8102}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7E77E7C6-2ECB-41D8-93EB-4C16BE0E8102}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E77E7C6-2ECB-41D8-93EB-4C16BE0E8102}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E77E7C6-2ECB-41D8-93EB-4C16BE0E8102}.Release|Any CPU.Build.0 = Release|Any CPU
->>>>>>> 64e4fff (Casos de prueba Perito)
+		{5EF4B70B-F571-4DF1-B1EA-B112C6771B85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EF4B70B-F571-4DF1-B1EA-B112C6771B85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EF4B70B-F571-4DF1-B1EA-B112C6771B85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EF4B70B-F571-4DF1-B1EA-B112C6771B85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

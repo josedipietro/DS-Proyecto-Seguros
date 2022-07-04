@@ -50,8 +50,6 @@ namespace Administrador.Persistence.DAOs
                 Phone = insuredDTO.Phone,
                 Birthday = insuredDTO.Birthday,
                 IsActive = true,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
             };
 
             _context.Insureds.Add(insured);

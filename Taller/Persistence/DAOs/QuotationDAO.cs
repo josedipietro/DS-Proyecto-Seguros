@@ -1,3 +1,4 @@
+using Base.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Taller.BussinesLogic.DTOs;
 using Taller.Persistence.Database;
@@ -31,6 +32,18 @@ namespace Taller.Persistence.DAOs
 
         public async Task<Quotation> CreateQuotation(QuotationDTO participationDTO)
         {
+
+            var repairRequest = await _context.RepairRequests.FindAsync(participationDTO.RepairRequest);
+        
+            if (repairRequest == null)
+            {
+                throw new RCVException("RepairRequest not exist");
+            }
+
+            if (repairRequest.BuyDate.Year > 2020)
+            {
+                participationDTO.Total /= 2;
+            }
             var partQ = new Quotation
             {
                 QuantityToRepair = participationDTO.QuantityToRepair,
@@ -38,7 +51,6 @@ namespace Taller.Persistence.DAOs
                 NumberOfDays = participationDTO.NumberOfDays,
                 StartDate = participationDTO.StartDate,
                 EndDate = participationDTO.EndDate,
-                RepairRequest = participationDTO.RepairRequest,
                 /*PartId = participationDTO.PartId,
                 Quantity = participationDTO.Quantity,
                 UnitPrice = participationDTO.UnitPrice,
@@ -64,7 +76,6 @@ namespace Taller.Persistence.DAOs
             quotation.NumberOfDays = quotationDTO.NumberOfDays;
             quotation.StartDate = quotationDTO.StartDate;
             quotation.EndDate = quotationDTO.EndDate;
-            quotation.RepairRequest = quotationDTO.RepairRequest;
             quotation.UpdatedAt = DateTime.Now;
 
             _context.Quotations.Update(quotation);

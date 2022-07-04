@@ -18,6 +18,8 @@ namespace Administrador.Persistence.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+
+        public DateTime BuyDate { get; set; }
         public Guid VehicleId { get; set; }
         public virtual Vehicle Vehicle { get; set; }
 

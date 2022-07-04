@@ -31,8 +31,10 @@ namespace Taller.Persistence.DAOs
 
         public async Task<RepairRequest> CreateRepairRequest(RepairRequestDTO repairRequestDTO)
         {
+
             var partQ = new RepairRequest
             {
+                BuyDate = repairRequestDTO.BuyDate,
                 VehicleId = repairRequestDTO.VehicleId,
                 PolicyId = repairRequestDTO.PolicyId,
                 IncidentId = repairRequestDTO.IncidentId,

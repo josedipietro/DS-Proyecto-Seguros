@@ -2,6 +2,7 @@
 using Proveedor.BussinesLogic.DTOs;
 using Proveedor.Persistence.Database;
 using Proveedor.Persistence.Entities;
+using Base.Exceptions;
 
 namespace Proveedor.Persistence.DAOs
 {
@@ -31,6 +32,26 @@ namespace Proveedor.Persistence.DAOs
 
         public async Task<PartQuotation> CreateParticipation(PartQuotationDTO participationDTO)
         {
+
+            var part = await _context.Parts.FindAsync(participationDTO.PartId);
+
+            if (part == null)
+            {
+                throw new RCVException("Part not Exists");
+            }
+
+            var repairRequest = await _context.RepairRequests.FindAsync(part.RepairRequestId);
+
+            if (repairRequest == null)
+            {
+                throw new RCVException("RepairRequest not exist");
+            }
+
+            if (repairRequest.BuyDate.Year > 2020) {
+                participationDTO.UnitPrice /= 2;
+            }
+
+
             var partQ = new PartQuotation
             {
                 DeliveryEndDate = participationDTO.DeliveryEndDate,
@@ -38,7 +59,6 @@ namespace Proveedor.Persistence.DAOs
                 DeliveryTime = participationDTO.DeliveryTime,
                 discount_percentage = participationDTO.discount_percentage,
                 Original = participationDTO.Original,
-                Part = participationDTO.Part,
                 PartId = participationDTO.PartId,
                 Quantity = participationDTO.Quantity,
                 UnitPrice = participationDTO.UnitPrice,

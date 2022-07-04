@@ -34,6 +34,8 @@ namespace Proveedor.Persistence.DAOs
         {
             var partQ = new RepairRequest
             {
+                BuyDate = repairRequestDTO.BuyDate,
+                Id = repairRequestDTO.Id,
                 Parts = repairRequestDTO.Parts
             };
             _context.RepairRequests.Add(partQ);
