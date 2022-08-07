@@ -14,7 +14,7 @@ namespace Administrador.BussinesLogic.Commands.Brand.Commands.Atomics
             _brandDAO = brandDAO;
         }
 
-        public override async void Execute()
+        public override async Task Execute()
         {
             _brands = await _brandDAO.List();
         }

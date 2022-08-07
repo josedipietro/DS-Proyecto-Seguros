@@ -32,9 +32,9 @@ namespace Administrador.Controllers
         [HttpGet]
         public async Task<ActionResult<List<BrandDTO>>> GetBrands()
         {
-            var brandsCommand = await _brandCommandFactory.GetBrands();
-            brandsCommand.Execute();
-            return await brandsCommand.GetResult();
+            var Command = await _brandCommandFactory.GetBrands();
+            await Command.Execute();
+            return await Command.GetResult();
         }
 
         // GET: api/Brands/5

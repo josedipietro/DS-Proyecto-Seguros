@@ -5,6 +5,7 @@ using Administrador.Persistence.DAOs;
 using Base.Services.RabbitMQ;
 using MassTransit;
 using Administrador.Consumers;
+using Administrador.BussinesLogic.Commands.Brand;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,7 @@ builder.Services.AddTransient<IIncidentDAO, IncidentDAO>();
 builder.Services.AddTransient<IRepairRequestDAO, RepairRequestDAO>();
 builder.Services.AddTransient<IPartDAO, PartDAO>();
 builder.Services.AddTransient<IPartQuotationDAO, PartQuotationDAO>();
+builder.Services.AddTransient<IBrandCommandFactory, BrandCommandFactory>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -107,6 +109,10 @@ builder.Services.AddMassTransit(configurator =>
             );
         }
     );
+    configurator.AddConsumer<IncidentConsumer>();
+    configurator.AddConsumer<RepairRequestConsumer>();
+    configurator.AddConsumer<PartQuotationConsumer>();
+    configurator.AddConsumer<PartConsumer>();
 });
 
 var app = builder.Build();
