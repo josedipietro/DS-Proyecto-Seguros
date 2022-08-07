@@ -55,6 +55,7 @@ builder.Services.AddSingleton<AmqpService>();
 // Configure MassTransit RabbitMQ
 builder.Services.AddMassTransit(configurator =>
 {
+    // set EntityFramework Provider
     configurator.UsingRabbitMq(
         (context, cfg) =>
         {
@@ -66,6 +67,7 @@ builder.Services.AddMassTransit(configurator =>
                     hostConfigurator.Password(builder.Configuration["amqp:password"]);
                 }
             );
+
             // configure endpoints
             cfg.ReceiveEndpoint(
                 "administrador-incident-update",
@@ -73,7 +75,7 @@ builder.Services.AddMassTransit(configurator =>
                 {
                     endpointConfigurator.ClearSerialization();
                     endpointConfigurator.UseRawJsonSerializer();
-                    endpointConfigurator.Consumer<IncidentConsumer>();
+                    endpointConfigurator.ConfigureConsumer<IncidentConsumer>(context);
                 }
             );
             cfg.ReceiveEndpoint(
@@ -82,7 +84,7 @@ builder.Services.AddMassTransit(configurator =>
                 {
                     endpointConfigurator.ClearSerialization();
                     endpointConfigurator.UseRawJsonSerializer();
-                    endpointConfigurator.Consumer<RepairRequestConsumer>();
+                    endpointConfigurator.ConfigureConsumer<RepairRequestConsumer>(context);
                 }
             );
             cfg.ReceiveEndpoint(
@@ -91,7 +93,7 @@ builder.Services.AddMassTransit(configurator =>
                 {
                     endpointConfigurator.ClearSerialization();
                     endpointConfigurator.UseRawJsonSerializer();
-                    endpointConfigurator.Consumer<PartQuotationConsumer>();
+                    endpointConfigurator.ConfigureConsumer<PartQuotationConsumer>(context);
                 }
             );
             cfg.ReceiveEndpoint(
@@ -100,7 +102,7 @@ builder.Services.AddMassTransit(configurator =>
                 {
                     endpointConfigurator.ClearSerialization();
                     endpointConfigurator.UseRawJsonSerializer();
-                    endpointConfigurator.Consumer<PartConsumer>();
+                    endpointConfigurator.ConfigureConsumer<PartConsumer>(context);
                 }
             );
         }
