@@ -9,6 +9,7 @@ using Administrador.Persistence.Database;
 using Administrador.Persistence.Entities;
 using Administrador.BussinesLogic.DTOs;
 using Administrador.Persistence.DAOs;
+using Administrador.BussinesLogic.Commands.Brand;
 using Base.Exceptions;
 using Base.Services.RabbitMQ;
 
@@ -19,17 +20,21 @@ namespace Administrador.Controllers
     public class BrandsController : ControllerBase
     {
         private readonly IBrandDAO _brandDAO;
+        private readonly IBrandCommandFactory _brandCommandFactory;
 
-        public BrandsController(IBrandDAO brandDAO)
+        public BrandsController(IBrandDAO brandDAO, IBrandCommandFactory brandCommandFactory)
         {
             _brandDAO = brandDAO;
+            _brandCommandFactory = brandCommandFactory;
         }
 
         // GET: api/Brands
         [HttpGet]
         public async Task<ActionResult<List<BrandDTO>>> GetBrands()
         {
-            return await _brandDAO.List();
+            var brandsCommand = await _brandCommandFactory.GetBrands();
+            brandsCommand.Execute();
+            return await brandsCommand.GetResult();
         }
 
         // GET: api/Brands/5

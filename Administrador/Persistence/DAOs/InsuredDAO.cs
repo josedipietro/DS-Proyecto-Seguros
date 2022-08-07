@@ -49,7 +49,7 @@ namespace Administrador.Persistence.DAOs
                 Email = insuredDTO.Email,
                 Phone = insuredDTO.Phone,
                 Birthday = insuredDTO.Birthday,
-                IsActive = true
+                IsActive = true,
             };
 
             _context.Insureds.Add(insured);

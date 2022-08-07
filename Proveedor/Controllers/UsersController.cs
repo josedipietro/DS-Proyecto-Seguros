@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Proveedor.BussinesLogic.DTOs;
+using Proveedor.Persistence.DAOs;
 using Proveedor.Persistence.Database;
 using Proveedor.Persistence.Entities;
 
@@ -15,6 +17,7 @@ namespace Proveedor.Controllers
     public class UsersController : ControllerBase
     {
         private readonly ProveedorDbContext _context;
+        private readonly UserDAO _usersDAO;
 
         public UsersController(ProveedorDbContext context)
         {
@@ -25,108 +28,67 @@ namespace Proveedor.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-          if (_context.Users == null)
-          {
-              return NotFound();
-          }
-            return await _context.Users.ToListAsync();
+            return await _usersDAO.GetUsers(null);
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(Guid id)
         {
-          if (_context.Users == null)
-          {
-              return NotFound();
-          }
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
+            return await _usersDAO.GetUser(id);
         }
 
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        /* [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(Guid id, User user)
         {
-            if (id != user.Id)
-            {
-                return BadRequest();
-            }
 
-            _context.Entry(user).State = EntityState.Modified;
+            var userToUpdate = await _context.Enterprises.FindAsync(id);
+
+            if (userToUpdate == null)
+            {
+                return NotFound();
+            }
 
             try
             {
-                await _context.SaveChangesAsync();
+                return await _usersDAO.
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
                     throw;
-                }
             }
 
-            return NoContent();
-        }
+        }*/
 
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<User>> PostUser(UserDTO user)
         {
-          if (_context.Users == null)
-          {
-              return Problem("Entity set 'ProveedorDbContext.Users'  is null.");
-          }
-            _context.Users.Add(user);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (UserExists(user.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            var createdUser = await _usersDAO.CreateUser(user);
+            return CreatedAtAction("GetUser", createdUser);
         }
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
-            if (_context.Users == null)
+            var userToUpdate = await _context.Users.FindAsync(id);
+
+            if (userToUpdate == null)
             {
                 return NotFound();
             }
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            try
             {
-                return NotFound();
+                await _usersDAO.DeleteUser(userToUpdate);
             }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
             return NoContent();
         }
 

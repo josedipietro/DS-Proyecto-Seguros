@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Proveedor.BussinesLogic.DTOs;
+using Proveedor.Persistence.DAOs;
 using Proveedor.Persistence.Database;
 using Proveedor.Persistence.Entities;
 
@@ -15,10 +17,12 @@ namespace Proveedor.Controllers
     public class RepairRequestsController : ControllerBase
     {
         private readonly ProveedorDbContext _context;
+        private readonly RepairRequestDAO _repairRequestDAO;
 
         public RepairRequestsController(ProveedorDbContext context)
         {
             _context = context;
+            _repairRequestDAO = new RepairRequestDAO(context);
         }
 
         // GET: api/RepairRequests
@@ -29,7 +33,7 @@ namespace Proveedor.Controllers
           {
               return NotFound();
           }
-            return await _context.RepairRequests.ToListAsync();
+            return await _repairRequestDAO.GetRepairRequests();
         }
 
         // GET: api/RepairRequests/5
@@ -40,7 +44,7 @@ namespace Proveedor.Controllers
           {
               return NotFound();
           }
-            var repairRequest = await _context.RepairRequests.FindAsync(id);
+            var repairRequest = await _repairRequestDAO.GetRepairRequest(id);
 
             if (repairRequest == null)
             {
@@ -53,59 +57,30 @@ namespace Proveedor.Controllers
         // PUT: api/RepairRequests/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRepairRequest(Guid id, RepairRequest repairRequest)
+        public async Task<IActionResult> PutRepairRequest(Guid id, RepairRequestDTO repairRequestDTO)
         {
-            if (id != repairRequest.Id)
+            if (!_repairRequestDAO.RepairRequestExist(id))
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(repairRequest).State = EntityState.Modified;
+            var repairRequest = await _repairRequestDAO.UpdateRepairRequests(id, repairRequestDTO);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RepairRequestExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+            return repairRequest == null ? NotFound() : Ok(repairRequest);
         }
 
         // POST: api/RepairRequests
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<RepairRequest>> PostRepairRequest(RepairRequest repairRequest)
+        public async Task<ActionResult<RepairRequest>> PostRepairRequest(RepairRequestDTO repairRequestDTO)
         {
           if (_context.RepairRequests == null)
           {
               return Problem("Entity set 'ProveedorDbContext.RepairRequests'  is null.");
           }
-            _context.RepairRequests.Add(repairRequest);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (RepairRequestExists(repairRequest.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+
+            var repairRequest = await _repairRequestDAO.CreateRepairRequest(repairRequestDTO);
 
             return CreatedAtAction("GetRepairRequest", new { id = repairRequest.Id }, repairRequest);
         }
@@ -132,7 +107,7 @@ namespace Proveedor.Controllers
 
         private bool RepairRequestExists(Guid id)
         {
-            return (_context.RepairRequests?.Any(e => e.Id == id)).GetValueOrDefault();
+            return _repairRequestDAO.RepairRequestExist(id);
         }
     }
 }

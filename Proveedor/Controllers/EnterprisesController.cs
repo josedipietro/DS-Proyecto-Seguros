@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Proveedor.BussinesLogic.DTOs;
 using Proveedor.Persistence.Database;
 using Proveedor.Persistence.Entities;
+using Administrador.Persistence.DAOs;
 
 namespace Proveedor.Controllers
 {
@@ -15,120 +12,90 @@ namespace Proveedor.Controllers
     public class EnterprisesController : ControllerBase
     {
         private readonly ProveedorDbContext _context;
+        private readonly EnterpriseDAO _enterpriseDAO;
 
         public EnterprisesController(ProveedorDbContext context)
         {
+            _enterpriseDAO = new EnterpriseDAO(context);
             _context = context;
         }
 
         // GET: api/Enterprises
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Enterprise>>> GetEnterprises()
+        public async Task<ActionResult<IEnumerable<Enterprise>>> GetEnterprises(
+            List<string>? brands
+        )
         {
-          if (_context.Enterprises == null)
-          {
-              return NotFound();
-          }
-            return await _context.Enterprises.ToListAsync();
+            return await _enterpriseDAO.GetEnterprises(brands);
         }
 
         // GET: api/Enterprises/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Enterprise>> GetEnterprise(Guid id)
         {
-          if (_context.Enterprises == null)
-          {
-              return NotFound();
-          }
-            var enterprise = await _context.Enterprises.FindAsync(id);
+            var enterprise = await _enterpriseDAO.GetEnterprise(id);
 
             if (enterprise == null)
             {
                 return NotFound();
             }
-
             return enterprise;
         }
 
         // PUT: api/Enterprises/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEnterprise(Guid id, Enterprise enterprise)
+        /*[HttpPut("{id}")]
+        public async Task<ActionResult<Enterprise>> PutEnterprise(
+            Guid id,
+            EnterpriseUpdateDTO enterprise
+        )
         {
-            if (id != enterprise.Id)
-            {
-                return BadRequest();
-            }
+            var enterpriseToUpdate = await _enterpriseDAO.UpdateEnterprise(id, enterprise);
 
-            _context.Entry(enterprise).State = EntityState.Modified;
+            if (enterpriseToUpdate == null)
+            {
+                return NotFound();
+            }
 
             try
             {
-                await _context.SaveChangesAsync();
+                return await _enterpriseDAO.UpdateEnterprise(enterpriseToUpdate, enterprise);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EnterpriseExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
-
-            return NoContent();
-        }
+        }*/
 
         // POST: api/Enterprises
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Enterprise>> PostEnterprise(Enterprise enterprise)
+        public async Task<ActionResult<Enterprise>> PostEnterprise(EnterpriseDTO enterpriseDTO)
         {
-          if (_context.Enterprises == null)
-          {
-              return Problem("Entity set 'ProveedorDbContext.Enterprises'  is null.");
-          }
-            _context.Enterprises.Add(enterprise);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (EnterpriseExists(enterprise.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetEnterprise", new { id = enterprise.Id }, enterprise);
+            var enterprise = await _enterpriseDAO.CreateEnterprise(enterpriseDTO);
+            return CreatedAtAction("GetEnterprise", enterprise);
         }
 
         // DELETE: api/Enterprises/5
-        [HttpDelete("{id}")]
+        /*[HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEnterprise(Guid id)
         {
-            if (_context.Enterprises == null)
+            var enterpriseToUpdate = await _context.Enterprises.FindAsync(id);
+
+            if (enterpriseToUpdate == null)
             {
                 return NotFound();
             }
-            var enterprise = await _context.Enterprises.FindAsync(id);
-            if (enterprise == null)
+            try
             {
-                return NotFound();
+                await _enterpriseDAO.DeleteEnterprise(enterpriseToUpdate);
             }
-
-            _context.Enterprises.Remove(enterprise);
-            await _context.SaveChangesAsync();
-
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
             return NoContent();
-        }
+        }*/
 
         private bool EnterpriseExists(Guid id)
         {

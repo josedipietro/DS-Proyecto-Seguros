@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Proveedor.BussinesLogic.DTOs;
+using Proveedor.Persistence.DAOs;
 using Proveedor.Persistence.Database;
 using Proveedor.Persistence.Entities;
 
@@ -15,10 +17,12 @@ namespace Proveedor.Controllers
     public class ParticipationsController : ControllerBase
     {
         private readonly ProveedorDbContext _context;
+        private readonly ParticipationDAO _participationDAO;
 
         public ParticipationsController(ProveedorDbContext context)
         {
             _context = context;
+            _participationDAO = new ParticipationDAO(context);
         }
 
         // GET: api/Participations
@@ -29,7 +33,7 @@ namespace Proveedor.Controllers
           {
               return NotFound();
           }
-            return await _context.Participations.ToListAsync();
+            return await _participationDAO.GetParticipations();
         }
 
         // GET: api/Participations/5
@@ -40,7 +44,7 @@ namespace Proveedor.Controllers
           {
               return NotFound();
           }
-            var participation = await _context.Participations.FindAsync(id);
+            var participation = await _participationDAO.GetParticipation(id);
 
             if (participation == null)
             {
@@ -53,45 +57,27 @@ namespace Proveedor.Controllers
         // PUT: api/Participations/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutParticipation(Guid id, Participation participation)
+        public async Task<IActionResult> PutParticipation(Guid id, ParticipationDTO participationDTO)
         {
-            if (id != participation.Id)
+            if (!_participationDAO.ParticipationExists(id))
             {
-                return BadRequest();
-            }
+                return NotFound();
+            } 
+                var participation = await _participationDAO.UpdateParticipation(id, participationDTO);
 
-            _context.Entry(participation).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ParticipationExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return participation == null ? NotFound() : Ok(participation);
         }
 
         // POST: api/Participations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Participation>> PostParticipation(Participation participation)
+        public async Task<ActionResult<Participation>> PostParticipation(ParticipationDTO participationDTO)
         {
           if (_context.Participations == null)
           {
               return Problem("Entity set 'ProveedorDbContext.Participations'  is null.");
           }
-            _context.Participations.Add(participation);
-            await _context.SaveChangesAsync();
+            var participation = await _participationDAO.CreateParticipation(participationDTO);
 
             return CreatedAtAction("GetParticipation", new { id = participation.Id }, participation);
         }
@@ -118,7 +104,7 @@ namespace Proveedor.Controllers
 
         private bool ParticipationExists(Guid id)
         {
-            return (_context.Participations?.Any(e => e.Id == id)).GetValueOrDefault();
+            return _participationDAO.ParticipationExists(id);
         }
     }
 }

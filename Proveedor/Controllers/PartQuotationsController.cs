@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Proveedor.BussinesLogic.DTOs;
+using Proveedor.Persistence.DAOs;
 using Proveedor.Persistence.Database;
 using Proveedor.Persistence.Entities;
 
@@ -15,10 +17,12 @@ namespace Proveedor.Controllers
     public class PartQuotationsController : ControllerBase
     {
         private readonly ProveedorDbContext _context;
+        private readonly PartQuotationDAO _partQuotationDAO;
 
         public PartQuotationsController(ProveedorDbContext context)
         {
             _context = context;
+            _partQuotationDAO = new PartQuotationDAO(context);
         }
 
         // GET: api/PartQuotations
@@ -29,7 +33,7 @@ namespace Proveedor.Controllers
           {
               return NotFound();
           }
-            return await _context.PartQuotations.ToListAsync();
+            return await _partQuotationDAO.GetPartQuotations();
         }
 
         // GET: api/PartQuotations/5
@@ -40,7 +44,7 @@ namespace Proveedor.Controllers
           {
               return NotFound();
           }
-            var partQuotation = await _context.PartQuotations.FindAsync(id);
+            var partQuotation = await _partQuotationDAO.GetPartQuotation(id);
 
             if (partQuotation == null)
             {
@@ -53,14 +57,16 @@ namespace Proveedor.Controllers
         // PUT: api/PartQuotations/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPartQuotation(Guid id, PartQuotation partQuotation)
+        public async Task<IActionResult> PutPartQuotation(Guid id, PartQuotationDTO partQuotationDTO)
         {
-            if (id != partQuotation.Id)
+            if (!_partQuotationDAO.PartQuotationExist(id))
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(partQuotation).State = EntityState.Modified;
+            var partQuotation = await _partQuotationDAO.GetPartQuotation(id);
+
+            return partQuotation == null ? NotFound() : Ok(partQuotation);
 
             try
             {
@@ -84,14 +90,14 @@ namespace Proveedor.Controllers
         // POST: api/PartQuotations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<PartQuotation>> PostPartQuotation(PartQuotation partQuotation)
+        public async Task<ActionResult<PartQuotation>> PostPartQuotation(PartQuotationDTO partQuotationDTO)
         {
           if (_context.PartQuotations == null)
           {
               return Problem("Entity set 'ProveedorDbContext.PartQuotations'  is null.");
           }
-            _context.PartQuotations.Add(partQuotation);
-            await _context.SaveChangesAsync();
+           var partQuotation = await _partQuotationDAO.CreateParticipation(partQuotationDTO);
+  
 
             return CreatedAtAction("GetPartQuotation", new { id = partQuotation.Id }, partQuotation);
         }
@@ -118,7 +124,7 @@ namespace Proveedor.Controllers
 
         private bool PartQuotationExists(Guid id)
         {
-            return (_context.PartQuotations?.Any(e => e.Id == id)).GetValueOrDefault();
+            return _partQuotationDAO.PartQuotationExist(id);
         }
     }
 }

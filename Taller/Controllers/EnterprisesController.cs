@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Taller.BussinesLogic.DTOs;
+using Taller.Persistence.DAOs;
 using Taller.Persistence.Database;
 using Taller.Persistence.Entities;
 
@@ -15,10 +17,12 @@ namespace Taller.Controllers
     public class EnterprisesController : ControllerBase
     {
         private readonly TallerDbContext _context;
+        private readonly EnterpriseDAO _enterpriseDAO;
 
         public EnterprisesController(TallerDbContext context)
         {
             _context = context;
+            _enterpriseDAO = new EnterpriseDAO(context);
         }
 
         // GET: api/Enterprises
@@ -29,7 +33,19 @@ namespace Taller.Controllers
           {
               return NotFound();
           }
-            return await _context.Enterprises.ToListAsync();
+            return await _enterpriseDAO.GetEnterprises(null);
+        }
+
+        [HttpGet("{brand}")]
+        public async Task<ActionResult<IEnumerable<Enterprise>>> GetEnterprisesByBrand(string brand)
+        {
+            if (_context.Enterprises == null)
+            {
+                return NotFound();
+            }
+            var brands = new List<string>();
+            brands.Add(brand);
+            return await _enterpriseDAO.GetEnterprises(brands);
         }
 
         // GET: api/Enterprises/5
@@ -40,7 +56,7 @@ namespace Taller.Controllers
           {
               return NotFound();
           }
-            var enterprise = await _context.Enterprises.FindAsync(id);
+            var enterprise = await _enterpriseDAO.GetEnterprise(id);
 
             if (enterprise == null)
             {
@@ -52,8 +68,8 @@ namespace Taller.Controllers
 
         // PUT: api/Enterprises/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEnterprise(Guid id, Enterprise enterprise)
+        /*[HttpPut("{id}")]
+        public async Task<IActionResult> PutEnterprise(Guid id, EnterpriseDTO enterpriseDTO)
         {
             if (id != enterprise.Id)
             {
@@ -79,11 +95,11 @@ namespace Taller.Controllers
             }
 
             return NoContent();
-        }
+        }*/
 
         // POST: api/Enterprises
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        /*[HttpPost]
         public async Task<ActionResult<Enterprise>> PostEnterprise(Enterprise enterprise)
         {
           if (_context.Enterprises == null)
@@ -97,7 +113,7 @@ namespace Taller.Controllers
             }
             catch (DbUpdateException)
             {
-                if (EnterpriseExists(enterprise.Id))
+                if (_enterpriseDAO.EnterpriseExists(enterprise.Id))
                 {
                     return Conflict();
                 }
@@ -108,13 +124,14 @@ namespace Taller.Controllers
             }
 
             return CreatedAtAction("GetEnterprise", new { id = enterprise.Id }, enterprise);
-        }
+        }*/
 
         // DELETE: api/Enterprises/5
-        [HttpDelete("{id}")]
+        /*[HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEnterprise(Guid id)
         {
-            if (_context.Enterprises == null)
+            
+            if (_enterpriseDAO.)
             {
                 return NotFound();
             }
@@ -128,11 +145,11 @@ namespace Taller.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
+        }*/
 
-        private bool EnterpriseExists(Guid id)
+        /*private bool EnterpriseExists(Guid id)
         {
             return (_context.Enterprises?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+        }*/
     }
 }

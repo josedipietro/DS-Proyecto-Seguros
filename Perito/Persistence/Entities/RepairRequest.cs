@@ -24,6 +24,7 @@ namespace Perito.Persistence.Entities
         public EnumRepairStatus Status { get; set; }    = EnumRepairStatus.Peding;
         public Guid IncidentId { get; set; }
         public virtual Incident Incident { get; set; }
+        public DateTime BuyDate { get; set; }
         public virtual ICollection<Part> Parts { get; set; }
     }
 }

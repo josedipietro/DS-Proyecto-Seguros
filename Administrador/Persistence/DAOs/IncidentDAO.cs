@@ -74,7 +74,7 @@ namespace Administrador.Persistence.DAOs
                 ParishId = incidentDTO.ParishId,
                 PolicyId = incidentDTO.PolicyId,
                 ThirdPolicyId = incidentDTO.ThirdPolicyId,
-                IsActive = true
+                IsActive = true,
             };
 
             _context.Incidents.Add(incident);
