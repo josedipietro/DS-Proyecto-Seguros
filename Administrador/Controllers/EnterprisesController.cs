@@ -10,6 +10,7 @@ using Administrador.Persistence.Entities;
 using Administrador.Persistence.DAOs;
 using Administrador.BussinesLogic.DTOs;
 using Base.Services.RabbitMQ;
+using Administrador.BussinesLogic.Commands.Enterprises;
 
 namespace Administrador.Controllers
 {
@@ -17,76 +18,65 @@ namespace Administrador.Controllers
     [ApiController]
     public class EnterprisesController : ControllerBase
     {
-        private readonly IEnterpriseDAO _enterpriseDAO;
-        private readonly AmqpService _amqpService;
+        private readonly IEnterpriseCommandFactory _enterpriseCommandFactory;
 
-        public EnterprisesController(IEnterpriseDAO enterpriseDAO, AmqpService amqpService)
+        public EnterprisesController(IEnterpriseCommandFactory enterpriseCommandFactory)
         {
-            _enterpriseDAO = enterpriseDAO;
-            _amqpService = amqpService ?? throw new ArgumentNullException(nameof(amqpService));
+            _enterpriseCommandFactory = enterpriseCommandFactory;
         }
 
         // GET: api/Enterprises
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Enterprise>>> GetEnterprises(
+        public async Task<ActionResult<IEnumerable<EnterpriseDTO>>> GetEnterprises(
             int? parishId,
             List<string>? brands,
             EnumEnterpriseType? EnterpriseType
         )
         {
-            return await _enterpriseDAO.GetEnterprises(parishId, brands, EnterpriseType);
+            var Command = await _enterpriseCommandFactory.GetEnterprises(
+                parishId,
+                brands,
+                EnterpriseType
+            );
+            await Command.Execute();
+            return await Command.GetResult();
         }
 
         // GET: api/Enterprises/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Enterprise>> GetEnterprise(Guid id)
+        public async Task<ActionResult<EnterpriseDTO>> GetEnterprise(Guid id)
         {
-            var enterprise = await _enterpriseDAO.GetEnterprise(id);
-
-            if (enterprise == null)
+            var Command = await _enterpriseCommandFactory.GetEnterprise(id);
+            await Command.Execute();
+            var result = await Command.GetResult();
+            if (result == null)
             {
                 return NotFound();
             }
-            return enterprise;
+            return result;
         }
 
         // PUT: api/Enterprises/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<ActionResult<Enterprise>> PutEnterprise(
+        public async Task<ActionResult<EnterpriseDTO>> PutEnterprise(
             Guid id,
             EnterpriseUpdateDTO enterprise
         )
         {
-            var enterpriseToUpdate = await _enterpriseDAO.GetEnterprise(id);
+            // Obtener la Marca
+            var Command = await _enterpriseCommandFactory.GetAndUpdateEnterprise(id, enterprise);
 
-            if (enterpriseToUpdate == null)
-            {
-                return NotFound();
-            }
-
+            // Actualizar los datos
             try
             {
-                enterpriseToUpdate = await _enterpriseDAO.UpdateEnterprise(
-                    enterpriseToUpdate,
-                    enterprise
-                );
-                switch (enterpriseToUpdate.EnterpriseType)
+                await Command.Execute();
+                var result = await Command.GetResult();
+                if (result == null)
                 {
-                    case EnumEnterpriseType.Workshop:
-                        await _amqpService.SendMessageAsync(
-                            enterpriseToUpdate,
-                            "workshop-enterprise-update"
-                        );
-                        break;
-                    case EnumEnterpriseType.Supplier:
-                        await _amqpService.SendMessageAsync(
-                            enterpriseToUpdate,
-                            "supplier-enterprise-update"
-                        );
-                        break;
+                    return NotFound();
                 }
-                return enterpriseToUpdate;
+                return result;
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -99,64 +89,18 @@ namespace Administrador.Controllers
         [HttpPost]
         public async Task<ActionResult<Enterprise>> PostEnterprise(EnterpriseDTO enterpriseDTO)
         {
+            var Command = await _enterpriseCommandFactory.InsertEnterprise(enterpriseDTO);
+
             try
             {
-                var enterprise = await _enterpriseDAO.CreateEnterprise(enterpriseDTO);
-
-                switch (enterprise.EnterpriseType)
-                {
-                    case EnumEnterpriseType.Workshop:
-                        await _amqpService.SendMessageAsync(enterprise, "taller-enterprise-create");
-                        break;
-                    case EnumEnterpriseType.Supplier:
-                        await _amqpService.SendMessageAsync(
-                            enterprise,
-                            "proveedor-enterprise-create"
-                        );
-                        break;
-                }
-                return CreatedAtAction("GetEnterprise", new { id = enterprise.Id }, enterprise);
+                await Command.Execute();
+                var result = await Command.GetResult();
+                return CreatedAtAction("GetEnterprise", new { id = result.Id }, result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        // DELETE: api/Enterprises/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEnterprise(Guid id)
-        {
-            var enterpriseToUpdate = await _enterpriseDAO.GetEnterprise(id);
-
-            if (enterpriseToUpdate == null)
-            {
-                return NotFound();
-            }
-            try
-            {
-                enterpriseToUpdate = await _enterpriseDAO.DeleteEnterprise(enterpriseToUpdate);
-                switch (enterpriseToUpdate.EnterpriseType)
-                {
-                    case EnumEnterpriseType.Workshop:
-                        await _amqpService.SendMessageAsync(
-                            enterpriseToUpdate,
-                            "taller-enterprise-update"
-                        );
-                        break;
-                    case EnumEnterpriseType.Supplier:
-                        await _amqpService.SendMessageAsync(
-                            enterpriseToUpdate,
-                            "proveedor-enterprise-update"
-                        );
-                        break;
-                }
-            }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateException)
             {
                 throw;
             }
-            return NoContent();
         }
     }
 }

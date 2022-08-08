@@ -6,6 +6,7 @@ namespace Administrador.BussinesLogic.DTOs
 {
     public class EnterpriseDTO
     {
+        public Guid? Id { get; set; }
         public string Rif { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }

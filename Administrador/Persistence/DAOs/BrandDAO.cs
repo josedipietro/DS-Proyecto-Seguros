@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Administrador.BussinesLogic.DTOs;
 using Administrador.Persistence.Entities;
+using Administrador.BussinesLogic.Mappers;
 //using Base.Exceptions;
 using Administrador.Persistence.Database;
 using System;
@@ -23,36 +24,18 @@ namespace Administrador.Persistence.DAOs
             return (_context.Brands?.Any(e => e.Code == id)).GetValueOrDefault();
         }
 
-        public async Task<BrandDTO> Create(BrandDTO brand)
+        public async Task<Brand> Create(BrandDTO brand)
         {
-            var newBrand = new Brand
-            {
-                Code = brand.Code,
-                Name = brand.Name,
-                Description = brand.Description
-            };
+            var newBrand = BrandMapper.MapDTOtoEntity(brand);
             _context.Brands.Add(newBrand);
             await _context.SaveChangesAsync();
-            return brand;
+            return newBrand;
         }
 
         // Listar las marcas
-        public async Task<List<BrandDTO>> List()
+        public async Task<List<Brand>> List()
         {
-            var brands = await _context.Brands.ToListAsync();
-            var brandsDTO = new List<BrandDTO>();
-            foreach (var brand in brands)
-            {
-                brandsDTO.Add(
-                    new BrandDTO
-                    {
-                        Code = brand.Code,
-                        Name = brand.Name,
-                        Description = brand.Description
-                    }
-                );
-            }
-            return brandsDTO;
+            return await _context.Brands.ToListAsync();
         }
 
         // Obtener una marca por su código
@@ -62,18 +45,13 @@ namespace Administrador.Persistence.DAOs
         }
 
         // Actualizar una marca por su código
-        public async Task<BrandDTO> Update(Brand brand, UpdateBrandDTO brandDTO)
+        public async Task<Brand> Update(Brand brand, UpdateBrandDTO brandDTO)
         {
             brand.Name = brandDTO.Name;
             brand.Description = brandDTO.Description;
             _context.Brands.Update(brand);
             await _context.SaveChangesAsync();
-            return new BrandDTO
-            {
-                Code = brand.Code,
-                Name = brand.Name,
-                Description = brand.Description
-            };
+            return brand;
         }
     }
 }
