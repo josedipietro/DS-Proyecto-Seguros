@@ -5,7 +5,7 @@ using Perito.Persistence.Entities;
 
 namespace Perito.Persistence.DAOs
 {
-    public class UserDAO
+    public class UserDAO : IUserDAO
     {
         private readonly IPeritoDbContext _context;
 

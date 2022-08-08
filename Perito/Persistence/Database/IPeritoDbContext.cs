@@ -11,5 +11,6 @@ namespace Perito.Persistence.Database
         DbSet<Incident> Incidents { get; set; }
         DbSet<RepairRequest> RepairRequests { get; set; }
         DbSet<Part> Parts { get; set; }
+        Task<int> SaveChangesAsync();
     }
 }

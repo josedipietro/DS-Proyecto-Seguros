@@ -17,5 +17,9 @@ namespace Perito.Persistence.Database
         public virtual DbSet<Incident> Incidents { get; set; }
         public virtual DbSet<RepairRequest> RepairRequests { get; set; }
         public virtual DbSet<Part> Parts { get; set; }
+        public Task<int> SaveChangesAsync()
+        {
+            return base.SaveChangesAsync();
+        }
     }
 }
