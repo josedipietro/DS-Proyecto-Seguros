@@ -5,7 +5,7 @@ using Perito.Persistence.Entities;
 
 namespace Perito.Persistence.DAOs
 {
-    public class RepairRequestDAO
+    public class RepairRequestDAO : IRepairRequestDAO
     {
         private readonly IPeritoDbContext _context;
         public RepairRequestDAO(IPeritoDbContext context)

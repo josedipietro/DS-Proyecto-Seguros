@@ -20,5 +20,10 @@ namespace Taller.Persistence.Database
         public DbSet<Quotation> Quotations { get; set; }
         public DbSet<Enterprise> Enterprises { get; set; }
         public DbSet<Brand> Brands { get; set; }
+
+        internal Task SaveChangesAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -6,7 +6,7 @@ using Taller.Persistence.Entities;
 
 namespace Taller.Persistence.DAOs
 {
-    public class QuotationDAO
+    public class QuotationDAO: IQuotationDAO
     {
         private readonly TallerDbContext _context;
 
