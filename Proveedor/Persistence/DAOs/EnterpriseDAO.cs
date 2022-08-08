@@ -1,18 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using Proveedor.BussinesLogic.DTOs;
 using Proveedor.Persistence.Entities;
+//using Base.Exceptions;
 using Proveedor.Persistence.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Administrador.Persistence.DAOs
+namespace Proveedor.Persistence.DAOs
 {
-    public class EnterpriseDAO
+    public class EnterpriseDAO : IEnterpriseDAO
     {
-        private readonly ProveedorDbContext _context;
+        private readonly IProveedorDbContext _context;
 
-        public EnterpriseDAO(ProveedorDbContext context)
+        public EnterpriseDAO(IProveedorDbContext context)
         {
             _context = context;
         }

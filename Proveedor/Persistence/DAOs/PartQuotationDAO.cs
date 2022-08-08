@@ -6,7 +6,7 @@ using Base.Exceptions;
 
 namespace Proveedor.Persistence.DAOs
 {
-    public class PartQuotationDAO
+    public class PartQuotationDAO : IPartQuotationDAO
     {
         private readonly ProveedorDbContext _context;
 

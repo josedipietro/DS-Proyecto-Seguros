@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Proveedor.BussinesLogic.DTOs;
 using Proveedor.Persistence.Database;
 using Proveedor.Persistence.Entities;
-using Administrador.Persistence.DAOs;
+using Proveedor.Persistence.DAOs;
 
 namespace Proveedor.Controllers
 {

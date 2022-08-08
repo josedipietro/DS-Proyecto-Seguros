@@ -5,11 +5,11 @@ using Proveedor.BussinesLogic.DTOs;
 
 namespace Proveedor.Persistence.DAOs
 {
-    public class ParticipationDAO
+    public class ParticipationDAO : IParticipationDAO
     {
-        private readonly ProveedorDbContext _context;
+        private readonly IProveedorDbContext _context;
 
-        public ParticipationDAO(ProveedorDbContext context)
+        public ParticipationDAO(IProveedorDbContext context)
         {
             _context = context;
         }
