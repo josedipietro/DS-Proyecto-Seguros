@@ -1,8 +1,7 @@
-﻿using Taller.BussinesLogic.DTOs;
-using Taller.BussinesLogic.DTOs;
-using Taller.Persistence.Entities;
+using Administrador.BussinesLogic.DTOs;
+using Administrador.Persistence.Entities;
 
-namespace Taller.BussinesLogic.Mappers
+namespace Administrador.BussinesLogic.Mappers
 {
     public class BrandMapper
     {
