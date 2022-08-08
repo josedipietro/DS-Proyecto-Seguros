@@ -21,9 +21,9 @@ namespace Taller.Persistence.Database
         public DbSet<Enterprise> Enterprises { get; set; }
         public DbSet<Brand> Brands { get; set; }
 
-        internal Task SaveChangesAsync()
+        public Task<int> SaveChangesAsync()
         {
-            throw new NotImplementedException();
+            return base.SaveChangesAsync();
         }
     }
 }
