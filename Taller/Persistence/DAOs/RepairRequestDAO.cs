@@ -5,7 +5,7 @@ using Taller.Persistence.Entities;
 
 namespace Taller.Persistence.DAOs
 {
-    public class RepairRequestDAO
+    public class RepairRequestDAO: IRepairRequestDAO
     {
         private readonly TallerDbContext _context;
 
