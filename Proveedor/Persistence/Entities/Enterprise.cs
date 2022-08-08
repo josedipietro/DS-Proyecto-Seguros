@@ -7,6 +7,11 @@ namespace Proveedor.Persistence.Entities
 {
     public class Enterprise : BaseEntity
     {
+        public enum EnumEnterpriseType
+        {
+            Workshop,
+            Supplier,
+        }
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Key]
         public Guid Id { get; set; }

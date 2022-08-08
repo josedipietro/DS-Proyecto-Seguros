@@ -13,5 +13,7 @@ namespace Proveedor.Persistence.Database
         DbSet<User> Users { get; set; }
         DbSet<PartQuotation> PartQuotations { get; set; }
         DbSet<Brand> Brands { get; set; }
+
+        Task<int> SaveChangesAsync();
     }
 }

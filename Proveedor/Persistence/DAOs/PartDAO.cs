@@ -5,12 +5,12 @@ using Proveedor.Persistence.Entities;
 
 namespace Proveedor.Persistence.DAOs
 {
-    public class PartDAO
+    public class PartDAO : IPartDAO
     {
 
-        private readonly ProveedorDbContext _context;
+        private readonly IProveedorDbContext _context;
 
-        public PartDAO(ProveedorDbContext context)
+        public PartDAO(IProveedorDbContext context)
         {
             _context = context;
         }

@@ -1,6 +1,7 @@
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Proveedor.Persistence.Database;
+using Proveedor.Persistence.DAOs;
 using Base.Services.RabbitMQ;
 using MassTransit;
 
@@ -15,6 +16,14 @@ builder.Services.AddDbContext<ProveedorDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+builder.Services.AddTransient<IProveedorDbContext, ProveedorDbContext>();
+builder.Services.AddTransient<IBrandDAO, BrandDAO>();
+builder.Services.AddTransient<IEnterpriseDAO, EnterpriseDAO>();
+builder.Services.AddTransient<IUserDAO, UserDAO>();
+builder.Services.AddTransient<IRepairRequestDAO, RepairRequestDAO>();
+builder.Services.AddTransient<IPartDAO, PartDAO>();
+builder.Services.AddTransient<IPartQuotationDAO, PartQuotationDAO>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

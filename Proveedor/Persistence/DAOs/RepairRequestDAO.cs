@@ -6,7 +6,7 @@ using Proveedor.Persistence.Entities;
 
 namespace Proveedor.Persistence.DAOs
 {
-    public class RepairRequestDAO
+    public class RepairRequestDAO : IRepairRequestDAO
     {
         private readonly ProveedorDbContext _context;
 

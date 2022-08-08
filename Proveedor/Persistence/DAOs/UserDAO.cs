@@ -5,7 +5,7 @@ using Proveedor.Persistence.Entities;
 
 namespace Proveedor.Persistence.DAOs
 {
-    public class UserDAO
+    public class UserDAO : IUserDAO
     {
         private readonly ProveedorDbContext _context;
 
