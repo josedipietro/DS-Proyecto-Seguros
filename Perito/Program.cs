@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Perito.Persistence.Database;
 using Base.Services.RabbitMQ;
 using MassTransit;
+using Perito.Persistence.DAOs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,13 @@ builder.Services.AddDbContext<PeritoDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+
+builder.Services.AddTransient<IPeritoDbContext, PeritoDbContext>();
+builder.Services.AddTransient<IIncidentDAO, IncidentDAO>();
+builder.Services.AddTransient<IUserDAO, UserDAO>();
+builder.Services.AddTransient<IPartDAO, PartDAO>();
+builder.Services.AddTransient<IRepairRequestDAO, RepairRequestDAO>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

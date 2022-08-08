@@ -5,7 +5,7 @@ using Taller.BussinesLogic.DTOs;
 
 namespace Taller.Persistence.DAOs
 {
-    public class UserDAO
+    public class UserDAO : IUserDAO
     {
         private readonly TallerDbContext _context;
 

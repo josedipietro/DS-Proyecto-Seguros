@@ -5,7 +5,7 @@ using Perito.Persistence.Entities;
 
 namespace Perito.Persistence.DAOs
 {
-    public class PartDAO
+    public class PartDAO : IPartDAO
     {
 
         private readonly IPeritoDbContext _context;
@@ -40,7 +40,7 @@ namespace Perito.Persistence.DAOs
                 IsActive = true,
             };
             _context.Parts.Add(part);
-            await _context.DbContext.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             return part;
         }

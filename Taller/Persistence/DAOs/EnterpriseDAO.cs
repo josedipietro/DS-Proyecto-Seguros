@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Taller.Persistence.DAOs
 {
-    public class EnterpriseDAO
+    public class EnterpriseDAO : IEnterpriseDAO
     {
         private readonly TallerDbContext _context;
 
