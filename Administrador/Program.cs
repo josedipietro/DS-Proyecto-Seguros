@@ -5,7 +5,7 @@ using Administrador.Persistence.DAOs;
 using Base.Services.RabbitMQ;
 using MassTransit;
 using Administrador.Consumers;
-using Administrador.BussinesLogic.Commands.Brand;
+using Administrador.BussinesLogic.Commands.Brands;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -9,9 +9,7 @@ using Administrador.Persistence.Database;
 using Administrador.Persistence.Entities;
 using Administrador.BussinesLogic.DTOs;
 using Administrador.Persistence.DAOs;
-using Administrador.BussinesLogic.Commands.Brand;
-using Base.Exceptions;
-using Base.Services.RabbitMQ;
+using Administrador.BussinesLogic.Commands.Brands;
 
 namespace Administrador.Controllers
 {
@@ -19,12 +17,10 @@ namespace Administrador.Controllers
     [ApiController]
     public class BrandsController : ControllerBase
     {
-        private readonly IBrandDAO _brandDAO;
         private readonly IBrandCommandFactory _brandCommandFactory;
 
-        public BrandsController(IBrandDAO brandDAO, IBrandCommandFactory brandCommandFactory)
+        public BrandsController(IBrandCommandFactory brandCommandFactory)
         {
-            _brandDAO = brandDAO;
             _brandCommandFactory = brandCommandFactory;
         }
 
@@ -41,19 +37,14 @@ namespace Administrador.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<BrandDTO>> GetBrand(string id)
         {
-            var brand = await _brandDAO.Get(id);
-
-            if (brand == null)
+            var Command = await _brandCommandFactory.GetBrand(id);
+            await Command.Execute();
+            var result = await Command.GetResult();
+            if (result == null)
             {
                 return NotFound();
             }
-
-            return new BrandDTO
-            {
-                Code = brand.Code,
-                Name = brand.Name,
-                Description = brand.Description
-            };
+            return result;
         }
 
         // PUT: api/Brands/5
@@ -62,18 +53,18 @@ namespace Administrador.Controllers
         public async Task<ActionResult<BrandDTO>> PutBrand(string id, UpdateBrandDTO brand)
         {
             // Obtener la Marca
-            var brandToUpdate = await _brandDAO.Get(id);
-
-            if (brandToUpdate == null)
-            {
-                return NotFound();
-            }
+            var Command = await _brandCommandFactory.GetAndUpdateBrand(id, brand);
 
             // Actualizar los datos
-
             try
             {
-                return await _brandDAO.Update(brandToUpdate, brand);
+                await Command.Execute();
+                var result = await Command.GetResult();
+                if (result == null)
+                {
+                    return NotFound();
+                }
+                return result;
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -86,13 +77,20 @@ namespace Administrador.Controllers
         [HttpPost]
         public async Task<ActionResult<Brand>> PostBrand(BrandDTO brand)
         {
+            var Command = await _brandCommandFactory.InsertBrand(brand);
+
             try
             {
-                await _brandDAO.Create(brand);
+                await Command.Execute();
+                var result = await Command.GetResult();
+                return CreatedAtAction("GetBrand", new { id = result.Code }, result);
             }
             catch (DbUpdateException)
             {
-                if (_brandDAO.BrandExists(brand.Code))
+                var GetCommand = await _brandCommandFactory.GetBrand(brand.Code);
+                await GetCommand.Execute();
+                var result = await Command.GetResult();
+                if (result != null)
                 {
                     return Conflict();
                 }
@@ -101,8 +99,6 @@ namespace Administrador.Controllers
                     throw;
                 }
             }
-
-            return CreatedAtAction("GetBrand", new { id = brand.Code }, brand);
         }
     }
 }
