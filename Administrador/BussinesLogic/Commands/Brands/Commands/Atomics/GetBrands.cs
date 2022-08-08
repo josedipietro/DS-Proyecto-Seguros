@@ -1,8 +1,9 @@
 using Administrador.BussinesLogic.Commands;
 using Administrador.BussinesLogic.DTOs;
 using Administrador.Persistence.DAOs;
+using Administrador.BussinesLogic.Mappers;
 
-namespace Administrador.BussinesLogic.Commands.Brand.Commands.Atomics
+namespace Administrador.BussinesLogic.Commands.Brands.Commands.Atomics
 {
     public class GetBrands : Command<List<BrandDTO>>
     {
@@ -16,7 +17,13 @@ namespace Administrador.BussinesLogic.Commands.Brand.Commands.Atomics
 
         public override async Task Execute()
         {
-            _brands = await _brandDAO.List();
+            var brands = await _brandDAO.List();
+            var _brands = new List<BrandDTO>();
+            foreach (var brand in brands)
+            {
+                // call BrandMapper.MapEntityToDTO(brand)
+                _brands.Add(BrandMapper.MapEntityToDTO(brand));
+            }
         }
 
         public override async Task<List<BrandDTO>> GetResult()

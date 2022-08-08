@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Base.Exceptions;
+using Microsoft.EntityFrameworkCore;
 using Perito.BussinesLogic.DTOs;
 using Perito.Persistence.Database;
 using Perito.Persistence.Entities;
 
 namespace Perito.Persistence.DAOs
 {
-    public class IncidentDAO
+    public class IncidentDAO: IIncidentDAO
     {
         private readonly IPeritoDbContext _context;
 
@@ -14,18 +15,53 @@ namespace Perito.Persistence.DAOs
             _context = proveedorDbContext;
         }
 
-        public async Task<Incident?> GetIncident(Guid id)
-        {
-            return await _context.Incidents
-                .FindAsync(id);
+        public async Task<IncidentDTO> Get(string id)
+        {   
+            var inc = await _context.Incidents.FindAsync(id);
+            if (inc == null) throw new RCVException("No se encontro el incidente");
+
+            var repairRequests = new List<String>();
+            foreach (var rr in inc.RepairRequests)
+            {
+                repairRequests.Add(rr.Id.ToString());
+            };
+            return new IncidentDTO
+            {
+                IsGuilty = inc.IsGuilty,
+                RepairRequests = repairRequests,
+                RevisionDescription = inc.RevisionDescription,
+                Status = inc.Status,
+                UserId = inc.UserId,
+                User = inc.User
+            };
         }
 
-        public async Task<List<Incident>> GetIncidents()
+        public async Task<List<IncidentDTO>> List()
         {
-            return await _context.Incidents.ToListAsync();
+            var incidents = await _context.Incidents.ToListAsync();
+            var incidentsDTO = new List<IncidentDTO>();
+            foreach (var inc in incidents)
+            {
+                var repairRequests = new List<String>();
+                foreach (var rr in inc.RepairRequests)
+                {
+                    repairRequests.Add(rr.Id.ToString());
+                };
+                incidentsDTO.Add(new IncidentDTO
+                {
+                    IsGuilty = inc.IsGuilty,
+                    RepairRequests = repairRequests,
+                    RevisionDescription = inc.RevisionDescription,
+                    Status = inc.Status,
+                    UserId = inc.UserId,
+                    User = inc.User
+
+                });
+            }
+            return incidentsDTO;
         }
 
-        public async Task<Incident> CreateIncident(IncidentDTO incidentDTO)
+        public async Task<IncidentDTO> Create(IncidentDTO incidentDTO)
         {
             var repairRequests = await _context.RepairRequests.Where(r => r.IsActive && incidentDTO.RepairRequests.Contains(r.Id.ToString())).ToListAsync();
             var incident= new Incident
@@ -42,16 +78,13 @@ namespace Perito.Persistence.DAOs
             };
 
             _context.Incidents.Add(incident);
-            await _context.DbContext.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-            return incident;
+            return incidentDTO;
         }
 
-        public async Task<Incident?> UpdateIncident(Guid id, IncidentDTO incidentDTO)
+        public async Task<IncidentDTO?> Update(Incident incident, IncidentDTO incidentDTO)
         {
-            var incident = await _context.Incidents.FindAsync(id);
-            if (incident == null) return null;
-
             var repairRequests = await _context.RepairRequests.Where(r => r.IsActive && incidentDTO.RepairRequests.Contains(r.Id.ToString())).ToListAsync();
 
             incident.IsGuilty = incidentDTO.IsGuilty;
@@ -62,14 +95,14 @@ namespace Perito.Persistence.DAOs
                 incident.UserId = incidentDTO.UserId;
 
             _context.Incidents.Update(incident);
-            await _context.DbContext.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-            return incident;
+            return incidentDTO;
         }
 
-        public bool IncidentExists(Guid id)
+        public bool IncidentExists(string id)
         {
-            return (_context.Incidents?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Incidents?.Any(e => e.Id.ToString() == id)).GetValueOrDefault();
         }
     }
 }
