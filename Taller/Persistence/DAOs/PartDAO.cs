@@ -5,7 +5,7 @@ using Taller.Persistence.Entities;
 
 namespace Taller.Persistence.DAOs
 {
-    public class PartDAO
+    public class PartDAO: IPartDAO
     {
 
         private readonly TallerDbContext _context;
