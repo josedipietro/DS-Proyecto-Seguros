@@ -6,7 +6,6 @@ namespace Administrador.Persistence.DAOs
     public interface IEnterpriseDAO
     {
         public Task<Enterprise?> GetEnterprise(Guid id);
-        public Task<Enterprise?> GetEnterprise(string name);
         public Task<List<Enterprise>> GetEnterprises(
             int? parishId,
             List<string>? brands,

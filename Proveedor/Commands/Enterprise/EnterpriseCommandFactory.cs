@@ -24,7 +24,7 @@ namespace Proveedor.BussinesLogic.Commands.Enterprises
         )
         {
             return Task<GetEnterprises>.Run(
-                () => new GetEnterprises(_enterpriseDAO, parishId, brands, EnterpriseType)
+                () => new GetEnterprises(_enterpriseDAO, brands)
             );
         }
 
