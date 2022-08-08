@@ -40,22 +40,6 @@ namespace Proveedor.BussinesLogic.Commands.Enterprises.Commands.Compose
                     _updateEnterpriseDTO
                 );
                 _enterprise = EnterpriseMapper.MapEntityToDTO(enterpriseUpdated);
-
-                switch (_enterprise.EnterpriseType)
-                {
-                    case EnumEnterpriseType.Workshop:
-                        await _amqpService.SendMessageAsync(
-                            _enterprise,
-                            "workshop-enterprise-update"
-                        );
-                        break;
-                    case EnumEnterpriseType.Supplier:
-                        await _amqpService.SendMessageAsync(
-                            _enterprise,
-                            "supplier-enterprise-update"
-                        );
-                        break;
-                }
             }
         }
 

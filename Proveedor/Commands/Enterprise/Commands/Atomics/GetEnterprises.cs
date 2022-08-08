@@ -17,20 +17,18 @@ namespace Proveedor.BussinesLogic.Commands.Enterprises.Commands.Atomics
 
         public GetEnterprises(
             IEnterpriseDAO enterpriseDAO,
-            int? parishId,
             List<string>? brands
         )
         {
             _enterpriseDAO = enterpriseDAO;
-            _parishId = parishId;
+
             _brands = brands;
         }
 
         public override async Task Execute()
         {
             var enterprises = await _enterpriseDAO.GetEnterprises(
-                _parishId,
-                _brands,
+                _brands
             );
             var _enterprises = new List<EnterpriseDTO>();
             foreach (var enterprise in enterprises)

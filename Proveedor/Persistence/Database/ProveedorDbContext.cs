@@ -21,5 +21,10 @@ namespace Proveedor.Persistence.Database
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<PartQuotation> PartQuotations { get; set; }
         public virtual DbSet<Brand> Brands { get; set; }
+
+        public Task<int> SaveChangesAsync()
+        {
+            return base.SaveChangesAsync();
+        }
     }
 }

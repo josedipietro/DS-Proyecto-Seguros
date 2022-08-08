@@ -31,15 +31,6 @@ namespace Proveedor.BussinesLogic.Commands.Enterprises.Commands.Atomics
         {
             var enterpriseInserted = await _enterpriseDAO.CreateEnterprise(_enterpriseDTO);
             _enterprise = EnterpriseMapper.MapEntityToDTO(enterpriseInserted);
-            switch (_enterprise.EnterpriseType)
-            {
-                case EnumEnterpriseType.Workshop:
-                    await _amqpService.SendMessageAsync(_enterprise, "taller-enterprise-create");
-                    break;
-                case EnumEnterpriseType.Supplier:
-                    await _amqpService.SendMessageAsync(_enterprise, "proveedor-enterprise-create");
-                    break;
-            }
         }
 
         public override async Task<EnterpriseDTO> GetResult()
