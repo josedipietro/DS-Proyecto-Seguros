@@ -9,25 +9,25 @@ namespace Administrador.Consumers
 {
     public class PartConsumer : IConsumer<PartDTO>
     {
-        // private readonly IPartDAO _partQuotationDAO;
+        private readonly IPartDAO _partQuotationDAO;
 
-        // public PartConsumer(IPartDAO partQuotationDAO)
-        // {
-        //     _partQuotationDAO = partQuotationDAO;
-        // }
+        public PartConsumer(IPartDAO partQuotationDAO)
+        {
+            _partQuotationDAO = partQuotationDAO;
+        }
 
         public async Task Consume(ConsumeContext<PartDTO> context)
         {
             var partQuotationDTO = context.Message;
             // create part quotation
-            // try
-            // {
-            //     await _partQuotationDAO.CreatePart(partQuotationDTO);
-            // }
-            // catch (Exception ex)
-            // {
-            //     System.Console.WriteLine($"Error: {ex.Message}");
-            // }
+            try
+            {
+                await _partQuotationDAO.CreatePart(partQuotationDTO);
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine($"Error: {ex.Message}");
+            }
         }
     }
 }
